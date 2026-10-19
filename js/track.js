@@ -23,3 +23,11 @@
     }catch(e){}
   };
 })();
+/* Start fetching Three.js early only when the 3D intro will actually play (not for skippers or reduced motion). */
+(function(){
+  try{
+    var st=JSON.parse(localStorage.getItem('unbound-guide-v1')||'{}');
+    if(st.intro===false || (window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    var l=document.createElement('link'); l.rel='preload'; l.as='script'; l.href='vendor/three.min.js'; document.head.appendChild(l);
+  }catch(e){}
+})();
