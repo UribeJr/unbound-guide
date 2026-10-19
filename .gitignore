@@ -1,0 +1,9 @@
+screenshots/
+tools/
+*.zip
+*.log
+.DS_Store
+node_modules/
+.vercel/
+__pycache__/
+*.pyc
