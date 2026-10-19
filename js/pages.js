@@ -62,6 +62,7 @@ window.PAGES = [
   <div class="stickers"><img src="${sprite('beldum')}" alt="" style="left:6px;top:0;transform:rotate(-12deg)"><img src="${sprite('gible')}" alt="" style="left:80px;top:46px;transform:rotate(9deg)"><img src="${sprite('larvitar')}" alt="" style="left:14px;top:96px;transform:rotate(-4deg)"></div>
   <div class="bstrip">${BADGES.map(b=>badgeSVG(b.id,30,'ghost')).join('')}</div>
   <div class="bottom">Notes, maps &amp; screenshots from <b>UNBOUNDWIKI.COM</b></div>
+  <div class="disc">Fan project, not affiliated with Nintendo, Game Freak, or Skeli Games; data and screenshots from unboundwiki.com.</div>
 </div>`},
 /* 1 INTRO */
 { sec:'intro', html:()=>`<div class="pin-in">${head('Before you begin','Welcome to<br>Borrius!','2')}

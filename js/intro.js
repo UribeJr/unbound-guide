@@ -13,13 +13,13 @@ function close(){
   const fin=()=>{ el.hidden=true; el.style.opacity=''; dispose(); G.annotateVisible&&G.annotateVisible(); };
   if(gs&&!RM) gs.to(el,{opacity:0,duration:.7,ease:'power1.out',onComplete:fin}); else { el.style.transition='opacity .4s'; el.style.opacity=0; setTimeout(fin,420); }
 }
-function skip(){ S.intro=false; G.save(); document.querySelectorAll('input[data-set="intro"]').forEach(x=>x.checked=false); close(); }
+function skip(){ window.track&&track('intro_skip'); S.intro=false; G.save(); document.querySelectorAll('input[data-set="intro"]').forEach(x=>x.checked=false); close(); }
 document.getElementById('introSkip').addEventListener('click',e=>{e.stopPropagation(); skip();});
 document.addEventListener('keydown',e=>{ if(el.hidden) return; if(e.key==='Escape'){ e.stopPropagation(); close(); } else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openNow(); } },true);
 
 function flat2d(msg){
   el.classList.add('is2d'); hint.textContent=msg||'tap the journal to open it';
-  const go=()=>{ if(opened) return; opened=true; landing();
+  const go=()=>{ if(opened) return; opened=true; window.track&&track('intro_open',{mode:'2d'}); landing();
     if(gs&&!RM) gs.to(flat,{rotationY:-70,transformOrigin:'0% 50%',opacity:0,duration:.6,ease:'power2.in',onComplete:close}); else close(); };
   flat.onclick=go; flat.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } };
 }
@@ -155,7 +155,7 @@ function build(){
   cv.addEventListener('pointermove',onMove);
   let lift=0; const state={opening:false};
   function open(){
-    if(state.opening) return; state.opening=true; opened=true; hint.textContent='';
+    if(state.opening) return; state.opening=true; opened=true; window.track&&track('intro_open',{mode:'3d'}); hint.textContent='';
     const tl=gs.timeline({onComplete:()=>{ landing(); close(); }});
     tl.to(band.position,{x:W/2+3.2,y:.6,duration:.55,ease:'power2.in'},0).to(band.rotation,{z:-.5,duration:.55},0)
       .to(camState,{idle:0,duration:.6},0)

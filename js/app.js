@@ -92,6 +92,8 @@ function endPage(i){
   <h3 class="bar">Credits</h3>
   <p class="credit">Walkthrough text, maps, screenshots, sprites and gym data © <a href="https://unboundwiki.com/walkthrough/" target="_blank" rel="noopener">unboundwiki.com</a>, credited and linked back to the wiki. Pokémon Unbound is a fan game by Skeli. Pokémon © Nintendo / Game Freak / Creatures. This is an unofficial fan guide.</p>
   <p class="credit">Data rules: only what the wiki prints is shown. Anything it leaves out is marked <span class="tbd">TBD</span>.</p>
+  <p class="disc">Fan project, not affiliated with Nintendo, Game Freak, or Skeli Games; data and screenshots from <a href="https://unboundwiki.com/walkthrough/" target="_blank" rel="noopener">unboundwiki.com</a>.</p>
+  <p><a class="report" href="https://github.com/UribeJr/unbound-guide/issues/new" target="_blank" rel="noopener">✎ Report an error / wrong data</a></p>
   ${R.folio(i,'THE END')}</div>`;
 }
 function pageInfo(i){
@@ -292,7 +294,9 @@ function renderGear(){
   } else if(S.tab==='settings'){
     const tg=(set,label,sub)=>`<div class="setrow"><div><span class="pbt-l">${label}</span><small>${sub}</small></div><label class="pbt"><input type="checkbox" data-set="${set}" ${S[set]?'checked':''} aria-label="${label}"><span class="pbt-track" aria-hidden="true"><span class="pbt-knob"></span></span></label></div>`;
     h+=tg('night','NIGHT MODE','Desk-lamp lighting for late-night grinding.')+tg('sync','FOLLOW BOOK PAGE','The PokéGear jumps to the section you are reading.')+tg('intro','DESK INTRO','Show the 3D journal on the desk when the guide opens.')+
-      `<div class="setrow"><div><span class="pbt-l">REPLAY INTRO</span><small>Watch the journal open again.</small></div><button class="chk" id="replayIntro" style="width:auto;padding:0 10px;font-size:8px">PLAY</button></div>`;
+      `<div class="setrow"><div><span class="pbt-l">REPLAY INTRO</span><small>Watch the journal open again.</small></div><button class="chk" id="replayIntro" style="width:auto;padding:0 10px;font-size:8px">PLAY</button></div>`+
+      `<div class="setrow"><div><span class="pbt-l">FOUND A MISTAKE?</span><small>Wrong data, missing item or typo? Tell us on GitHub.</small></div><a class="chk gearlink" href="https://github.com/UribeJr/unbound-guide/issues/new" target="_blank" rel="noopener">REPORT</a></div>`+
+      `<p class="gdisc">Fan project, not affiliated with Nintendo, Game Freak, or Skeli Games; data and screenshots from unboundwiki.com.</p>`;
   } else {
     const n=BADGES.filter(b=>S.badges[b.id]).length;
     h+=prog(n,8,'BADGES');
@@ -317,7 +321,7 @@ function syncMarks(){
     STAT={mons:[...mons],items:ALL.flatMap(l=>l.items.map(i=>i.id)),trs:ALL.flatMap(l=>l.trainers.map(t=>t.id))}; }
   ws.forEach(el=>el.innerHTML=`POKéMON CAUGHT ${STAT.mons.filter(m=>S.caught[m]).length}/${STAT.mons.length}<br>ITEMS FOUND ${STAT.items.filter(i=>S.items[i]).length}/${STAT.items.length}<br>TRAINERS BEATEN ${STAT.trs.filter(t=>S.trainers[t]).length}/${STAT.trs.length}<br>BADGES ${BADGES.filter(b=>S.badges[b.id]).length}/8`);
 }
-function openGear(open){ const g=$('#gear'); g.classList.toggle('open',open??!g.classList.contains('open')); $('#gearBtn').setAttribute('aria-expanded',g.classList.contains('open')); }
+function openGear(open){ const g=$('#gear'); const was=g.classList.contains('open'); g.classList.toggle('open',open??!was); if(!was&&g.classList.contains('open')&&window.track) track('pokegear_open',{tab:S.tab}); $('#gearBtn').setAttribute('aria-expanded',g.classList.contains('open')); }
 function rerenderPage(i){ $$(`.page[data-index="${i}"]`).forEach(el=>{el.innerHTML=pageInfo(i).html;}); syncMarks(); }
 
 /* ---------- stickers & stamps ---------- */
@@ -372,13 +376,13 @@ document.addEventListener('click',e=>{
   if(t.id==='next') return go(1);
   if(t.id==='gearBtn'||t.id==='gearClose') return openGear();
   if(t.classList.contains('corner')) return go(+t.dataset.dir);
-  if(t.dataset.ch!==undefined) return gotoPage(CH[+t.dataset.ch].page);
+  if(t.dataset.ch!==undefined){ window.track&&track('chapter_jump',{chapter:CH[+t.dataset.ch].name}); return gotoPage(CH[+t.dataset.ch].page); }
   if(t.dataset.goto!==undefined) return gotoPage(+t.dataset.goto);
   if(t.dataset.gym&&t.dataset.diff){ const g=B.gyms.find(x=>x.no==t.dataset.gym); S.diff[g.no]=t.dataset.diff; save(); return rerenderPage(g.page+1); }
-  if(t.dataset.caught){ const k=t.dataset.caught; S.caught[k]=!S.caught[k]; save(); renderGear(); return popSticker(k,S.caught[k]); }
+  if(t.dataset.caught){ const k=t.dataset.caught; S.caught[k]=!S.caught[k]; save(); renderGear(); window.track&&track('caught_toggle',{pokemon:k,caught:!!S.caught[k]}); return popSticker(k,S.caught[k]); }
   if(t.dataset.item){ S.items[t.dataset.item]=!S.items[t.dataset.item]; save(); renderGear(); if(S.items[t.dataset.item]&&G&&!RM) $$(`.icard[data-item="${t.dataset.item}"] .chkmk path`).forEach(p=>G.fromTo(p,{drawSVG:'0%'},{drawSVG:'100%',duration:.35,ease:'power2.out'})); return; }
   if(t.dataset.trainer){ const k=t.dataset.trainer; S.trainers[k]=!S.trainers[k]; save(); renderGear(); if(S.trainers[k]&&G&&!RM) $$(`.tdone[data-trainer="${k}"]`).forEach(b=>G.fromTo(b,{scale:2.2,opacity:0,rotation:-25},{scale:1,opacity:1,rotation:-8,duration:.3,ease:'back.out(3)',clearProps:'transform,opacity'})); return; }
-  if(t.dataset.stamp){ const id=t.dataset.stamp; S.badges[id]=!S.badges[id]; save(); renderGear(); return stampBadge(id,S.badges[id]); }
+  if(t.dataset.stamp){ const id=t.dataset.stamp; S.badges[id]=!S.badges[id]; save(); renderGear(); window.track&&track('badge_stamp',{badge:id,earned:!!S.badges[id]}); return stampBadge(id,S.badges[id]); }
   if(t.id==='replayIntro'){ openGear(false); return window.__intro&&window.__intro.play(true); }
   if(t.dataset.badge && t.classList.contains('bslot')){ S.badges[t.dataset.badge]=!S.badges[t.dataset.badge]; save(); return renderGear(); }
   if(t.classList.contains('btab')){ if(t.dataset.badge){ const i=BADGES.findIndex(b=>b.id===t.dataset.badge); gotoPage(B.gyms[i].page);} else gotoPage(1); return; }
@@ -386,7 +390,7 @@ document.addEventListener('click',e=>{
   if(t.dataset.loc){ const i=Math.max(0,LIST.findIndex(l=>l.id===S.loc)); S.loc=LIST[(i+(+t.dataset.loc)+LIST.length)%LIST.length].id; S.sync=false; save(); return renderGear(); }
   if(t.classList.contains('pin')||t.classList.contains('ipin')||t.matches('.legend li')){ flash(t); if(!t.matches('.legend li')) e.stopPropagation(); return; }
   if(t.dataset.full){ const lb=$('#lightbox'); const inl=t.querySelector('img');
-    $('img',lb).src = (window.LITE && inl) ? inl.getAttribute('src') : t.dataset.full; lb.classList.add('open'); return; }
+    $('img',lb).src = (window.LITE && inl) ? inl.getAttribute('src') : t.dataset.full; lb.classList.add('open'); window.track&&track('map_lightbox',{page:S.page}); return; }
 });
 function flash(t){
   const page=t.closest('.page'), k=t.dataset.pin; if(!page||!k) return;
@@ -399,7 +403,7 @@ document.addEventListener('mouseout',e=>{const li=e.target.closest('.legend li[d
 document.addEventListener('change',e=>{
   const inp=e.target; if(!inp.matches||!inp.matches('.pbt input')) return;
   const set=inp.dataset.set||(inp.id==='syncChk'?'sync':null);
-  if(set){ S[set]=inp.checked; save(); $$(`input[data-set="${set}"]`).forEach(x=>x.checked=inp.checked); if(set==='sync'){$('#syncChk').checked=inp.checked; afterNav();} if(set==='night') document.body.classList.toggle('night',inp.checked); }
+  if(set){ S[set]=inp.checked; save(); $$(`input[data-set="${set}"]`).forEach(x=>x.checked=inp.checked); if(set==='sync'){$('#syncChk').checked=inp.checked; afterNav();} if(set==='night'){ document.body.classList.toggle('night',inp.checked); window.track&&track('night_mode',{on:inp.checked}); } }
   const tr=inp.parentNode.querySelector('.pbt-track'), kn=tr&&tr.querySelector('.pbt-knob');
   if(G&&!RM&&tr){ G.fromTo(tr,{rotation:0},{keyframes:[{rotation:-10,duration:.07},{rotation:8,duration:.1},{rotation:-4,duration:.1},{rotation:0,duration:.14}],clearProps:'transform'});
     G.fromTo(kn,{scaleX:1.35,scaleY:.75},{scale:1,duration:.6,ease:'elastic.out(1.2,.3)',delay:.12,clearProps:'transform'}); }
