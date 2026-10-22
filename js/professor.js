@@ -13,7 +13,7 @@
   }
 
   // Original 16x16 pixel-art professor bust (not based on any official sprite).
-  var OAK='img/prof/oak-bust.png?v=5'; // Professor Oak, Pokémon FireRed/LeafGreen trainer front pic (pret/pokefirered)
+  var OAK='img/prof/oak-bust.png?v=6'; // Professor Oak, Pokémon FireRed/LeafGreen trainer front pic (pret/pokefirered)
   function avatar(sz,cls){ return '<img class="'+(cls||'pav')+'" src="'+OAK+'" width="'+sz+'" height="'+sz+'" alt="" aria-hidden="true" draggable="false">'; }
   function fmt(t){
     var max=(G()&&G().N)||926;
@@ -59,11 +59,31 @@
   document.addEventListener('click',function(e){
     var c=e.target.closest&&e.target.closest('[data-pchip]'); if(c){ e.preventDefault(); return ask(c.dataset.pchip); }
     var a=e.target.closest&&e.target.closest('.pcite'); if(a){ e.preventDefault(); if(document.body.classList.contains('mobile')) G().openGear(false); }
-    var fb=e.target.closest&&e.target.closest('#profFab'); if(fb){ e.preventDefault(); openProf(); }
+    if(e.target.closest&&e.target.closest('#profFab')){ e.preventDefault(); openProf(); }
+    if(e.target.closest&&e.target.closest('#gearClose,#gearBtn')){ var gg=document.getElementById('gear'); if(gg&&gg.classList.contains('pforce')){ gg.classList.remove('pforce'); gg.style.transform=gg.style.visibility=gg.style.opacity=''; } }
   },true);
   var lastOpen=0;
-  function openProf(){ var now=Date.now(); if(now-lastOpen<350) return; lastOpen=now; var g=G(); if(!g||!g.openGear){ return; } g.state.tab='prof'; g.save&&g.save(); g.openGear(true); g.renderGear&&g.renderGear(); setTimeout(function(){ var i=document.getElementById('pq'); if(i&&!document.body.classList.contains('mobile')) i.focus(); },60); }
-  var fillFab=function(){ var f=document.getElementById('profFab'); if(f&&!f.dataset.av){ f.dataset.av=1; f.innerHTML='<span class="pfring">'+avatar(44,'pav pfav')+'</span><span class="pfq" aria-hidden="true">?</span><span class="pftip" role="tooltip">Ask the Professor</span>'; } };
+  function gearShown(g){ if(!g||!g.classList.contains('open')) return false; var r=g.getBoundingClientRect(), cs=getComputedStyle(g);
+    return cs.display!=='none'&&cs.visibility!=='hidden'&&+cs.opacity>0.05&&r.width>40&&r.left<innerWidth-40&&r.top<innerHeight-40&&r.bottom>40; }
+  function openProf(){ var now=Date.now(); if(now-lastOpen<400) return; lastOpen=now;
+    var gear=document.getElementById('gear'), g=G();
+    try{ if(g&&g.openGear){ g.state.tab='prof'; try{g.save&&g.save();}catch(_){} g.openGear(true); g.renderGear&&g.renderGear(); } }catch(err){ window.console&&console.warn('Professor open failed, using fallback',err); }
+    // Safe fallback: if the PokéGear did not open or is still off-screen, force it open with inline styles.
+    setTimeout(function(){ if(!gear) return; if(!gearShown(gear)){ gear.classList.add('open','pforce'); gear.style.transform='none'; gear.style.visibility='visible'; gear.style.opacity='1';
+        var b=document.getElementById('gbody'); if(b&&!b.querySelector('.prof')){ b.innerHTML=html(); mount(); } }
+      var i=document.getElementById('pq'); if(i&&!document.body.classList.contains('mobile')) try{i.focus({preventScroll:true});}catch(_){ i.focus(); } },480);
+    window.track&&track('professor_open',{});
+  }
+  var fillFab=function(){
+    var f=document.getElementById('profFab'); if(!f||f.dataset.av) return; f.dataset.av=1;
+    // Top-level fixed layer, last child of <body>, outside every transformed / 3D ancestor.
+    var layer=document.getElementById('profLayer'); if(!layer){ layer=document.createElement('div'); layer.id='profLayer'; document.body.appendChild(layer); }
+    layer.appendChild(f);
+    f.innerHTML='<span class="pfring">'+avatar(44,'pav pfav')+'</span><span class="pfq" aria-hidden="true">?</span><span class="pftip" role="tooltip">Ask the Professor</span>';
+    // Direct binding on the button itself (pointerup + click, deduped), independent of document handlers.
+    f.addEventListener('pointerup',function(e){ if(e.button===0||e.pointerType!=='mouse'){ openProf(); } });
+    f.addEventListener('click',function(e){ e.preventDefault(); openProf(); });
+  };
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fillFab):fillFab();
   if(!WEB){ var hideFab=function(){ var f=document.getElementById('profFab'); if(f) f.hidden=true; }; document.readyState==='loading'?document.addEventListener('DOMContentLoaded',hideFab):hideFab(); }
   window.Professor={html:html,mount:mount,ask:ask};

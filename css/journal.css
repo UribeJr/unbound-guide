@@ -511,7 +511,10 @@ body.night .proffab .pfring{box-shadow:0 0 0 3px #3b3e48,0 6px 14px rgba(0,0,0,.
 .pfhead b{display:block;font-family:var(--px);font-size:8px;letter-spacing:1px}
 .pfhead span{font-size:11px;opacity:.8}
 .gbody:has(.prof){display:flex;flex-direction:column}
-.gear.open~.proffab,body:has(.gear.open) .proffab{display:none}
+.gear.open~#profLayer .proffab{display:none}
+#profLayer{position:fixed;inset:0;z-index:450;pointer-events:none;transform:none}
+#profLayer .proffab{pointer-events:auto}
+.gear.pforce{z-index:460}
 .gtabs button[data-tab="prof"]{font-weight:700}
 .prof{display:flex;flex-direction:column;gap:6px;min-height:0;flex:1}
 .plog{flex:1;min-height:90px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:2px 2px 4px;overscroll-behavior:contain}
