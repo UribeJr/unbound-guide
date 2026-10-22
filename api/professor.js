@@ -50,7 +50,8 @@ function search(q, badges, wantAhead, diff) {
 
 // ---------- protection ----------
 const INSTANCE = Math.random().toString(36).slice(2, 8);
-const hits = new Map(); // ip -> {min:[ts], day:[ts]}
+const hits = new Map();
+const uniqP = l => { const seen = new Set(); return l.filter(h => !seen.has(h.p) && seen.add(h.p)).map(h => ({ p: h.p, t: h.t })); }; // ip -> {min:[ts], day:[ts]}
 const cache = new Map(); // key -> {at, body}
 function limited(ip) {
   const now = Date.now(); const h = hits.get(ip) || { min: [], day: [] };
@@ -66,12 +67,13 @@ const SYS = `You are "the Professor", a warm, upbeat Pokémon professor helping 
 Rules:
 - Answer ONLY from the GUIDE EXCERPTS provided. If they don't cover the question, say the guide doesn't cover that (briefly) and suggest the closest page if any. Never invent Pokémon, levels, locations or items.
 - Cite pages inline exactly like "p.449" (the page number of the excerpt you used). Every factual sentence needs a citation.
+- Never guess at story timing (e.g. "before your first badge") unless an excerpt states it.
 - Keep it short: 2–5 sentences or a tiny bullet list. Plain text, no markdown tables, no headings.
 - The trainer has {BADGES} badge(s) and plays on {DIFF} difficulty. Tailor answers to that (e.g. badge-gated rewards, the matching gym team). Do not reveal story events, gyms or areas beyond their badge count unless they explicitly ask; excerpts marked [AHEAD] are beyond their progress.
 - Off-topic or non-Unbound questions: politely steer back to the guide in one sentence.`;
 
 function fallback(res, hitsList, reason) {
-  return res.status(200).json({ ok: false, resting: true, reason, answer: "The Professor's resting right now — here are the guide pages that best match your question:", sources: hitsList.map(h => ({ p: h.p, t: h.t })) });
+  return res.status(200).json({ ok: false, resting: true, reason, answer: "The Professor's resting right now — here are the guide pages that best match your question:", sources: uniqP(hitsList) });
 }
 
 async function askGroq(messages) {
@@ -123,7 +125,7 @@ module.exports = async (req, res) => {
   const ip = String(req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '?').split(',')[0].trim();
   const lim = limited(ip);
   const hh = hits.get(ip); res.setHeader('X-Professor-Instance', INSTANCE); if (hh) res.setHeader('X-Professor-Remaining', `${Math.max(0, PER_MIN - hh.min.length)}/min ${Math.max(0, PER_DAY - hh.day.length)}/day`);
-  if (lim) return res.status(429).json({ ok: false, resting: true, reason: 'rate', answer: lim === 'minute' ? "Whoa, slow down, trainer! The Professor can take 5 questions a minute — meanwhile, these pages match:" : "That's 20 questions today — the Professor's resting until tomorrow. These pages match your question:", sources: results.map(h => ({ p: h.p, t: h.t })) });
+  if (lim) return res.status(429).json({ ok: false, resting: true, reason: 'rate', answer: lim === 'minute' ? "Whoa, slow down, trainer! The Professor can take 5 questions a minute — meanwhile, these pages match:" : "That's 20 questions today — the Professor's resting until tomorrow. These pages match your question:", sources: uniqP(results) });
 
   if (!results.length) {
     const out = { ok: true, answer: "Hmm, I couldn't find anything in this guide about that — I only know what's written in the journal. Try asking about a route, gym, trainer, item or Pokémon!", sources: [], model: null };
