@@ -65,13 +65,14 @@
   <button id="next" aria-label="Next page">NEXT ▶</button>
 </div>
 
+<button class="proffab" id="profFab" aria-label="Ask the Professor"><span class="pf1">Stuck?</span><span class="pf2">Ask the Professor</span></button>
 <aside class="gear" id="gear" aria-label="PokéGear companion">
   <div class="ghead"><div class="lens"></div><div class="leds"><i></i><i></i><i></i></div><div class="gt1">POKéGEAR</div><button class="x" id="gearClose" aria-label="Close">✕</button></div>
   <div class="screen"><div class="lcd">
     <div class="locsel"><button data-loc="-1" aria-label="Previous location">◀</button><div class="ln" id="locName"></div><button data-loc="1" aria-label="Next location">▶</button></div>
     <div class="locsel2"><select id="locSel" aria-label="Choose location"></select></div>
     <div class="sync"><label class="pbt"><input type="checkbox" id="syncChk" data-set="sync"><span class="pbt-track" aria-hidden="true"><span class="pbt-knob"></span></span><span class="pbt-l">FOLLOW BOOK PAGE</span></label><span>SAVED LOCALLY</span></div>
-    <div class="gtabs"><button data-tab="wild">WILD</button><button data-tab="items">ITEMS</button><button data-tab="trainers">TRAINERS</button><button data-tab="badges">BADGES</button><button data-tab="settings" aria-label="Settings">⚙</button></div>
+    <div class="gtabs"><button data-tab="wild">WILD</button><button data-tab="items">ITEMS</button><button data-tab="trainers">TRAINERS</button><button data-tab="badges">BADGES</button><button data-tab="prof" aria-label="Ask the Professor">PROF.</button><button data-tab="settings" aria-label="Settings">⚙</button></div>
     <div class="gbody" id="gbody"></div>
   </div></div>
   <div class="gfoot"><div class="dpad" aria-hidden="true"></div><div class="pills" aria-hidden="true"><i></i><i></i></div><span class="credit2">DATA: UNBOUNDWIKI.COM</span><button id="resetBtn">RESET</button><div class="abtn" aria-hidden="true"><i>B</i><i>A</i></div></div>
@@ -129,6 +130,7 @@
 <script src="data/p38.js"></script>
 <script src="data/p39.js"></script>
 <script src="data/p40.js"></script>
+<script src="js/professor.js"></script>
 <script src="js/app.js"></script>
 <script src="js/intro.js"></script>
 </body>

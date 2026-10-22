@@ -291,6 +291,8 @@ function renderGear(){
         const small= loc.p1? `<small>Prize: ${t.reward} · ${t.note}</small>` : `<small>Prize: <span class="tbd">TBD</span></small>`;
         return `<div class="grow2 ${c?'done':''}"><div class="gi"><b>${esc(t.name.toUpperCase())}</b>${team}${small}</div><button class="chk" data-trainer="${t.id}">${c?'✓':''}</button></div>`}).join('')
       : `<div class="empty">NO TRAINERS LISTED<br>FOR THIS SECTION</div>`;
+  } else if(S.tab==='prof'){
+    h+=window.Professor?Professor.html():'';
   } else if(S.tab==='settings'){
     const tg=(set,label,sub)=>`<div class="setrow"><div><span class="pbt-l">${label}</span><small>${sub}</small></div><label class="pbt"><input type="checkbox" data-set="${set}" ${S[set]?'checked':''} aria-label="${label}"><span class="pbt-track" aria-hidden="true"><span class="pbt-knob"></span></span></label></div>`;
     h+=tg('night','NIGHT MODE','Desk-lamp lighting for late-night grinding.')+tg('sync','FOLLOW BOOK PAGE','The PokéGear jumps to the section you are reading.')+tg('intro','DESK INTRO','Show the 3D journal on the desk when the guide opens.')+
@@ -304,6 +306,7 @@ function renderGear(){
       <p style="font-size:11px;margin:10px 2px 0;line-height:1.3">Tap a badge to mark it earned. Use the badge tabs under the book to open each leader's spread.</p>`;
   }
   body.innerHTML=h;
+  if(S.tab==='prof'&&window.Professor) Professor.mount();
   syncMarks();
 }
 let STAT=null;
@@ -434,5 +437,5 @@ $('#badgestrip').innerHTML=`<button class="btab ch" title="Contents"><span class
 
 window.addEventListener('resize',layout);
 layout();
-window.__guide={go,gotoPage,setSpread,openGear,state:S,N,book:B,save,annotateVisible};
+window.__guide={go,gotoPage,setSpread,openGear,renderGear,state:S,N,book:B,save,annotateVisible};
 })();

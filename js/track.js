@@ -11,7 +11,7 @@
     });
   }
   /* custom events: max 1 per name every 4s (2s for map/catch toggles), 40 per page load */
-  var last={}, sent=0, GAP={caught_toggle:2000,map_lightbox:2000,chapter_jump:2000};
+  var last={}, sent=0, GAP={caught_toggle:2000,map_lightbox:2000,chapter_jump:2000,professor_ask:3000};
   window.track=function(name,data){
     try{
       if(!web) return;
