@@ -501,7 +501,7 @@ body.night .topbar .brand,body.night .badgestrip{filter:brightness(.82)}
 .gtabs button[data-tab="prof"]{font-weight:700}
 .prof{display:flex;flex-direction:column;gap:6px;min-height:0}
 .plog{max-height:46vh;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:2px 2px 4px;overscroll-behavior:contain}
-.pmsg{border:2px solid #306230;background:rgba(255,255,255,.14);padding:6px 8px;font-size:12px;line-height:1.35;border-radius:3px;max-width:94%;word-wrap:break-word}
+.pmsg{border:2px solid #306230;background:rgba(255,255,255,.14);padding:6px 8px;font-size:12px;line-height:1.35;border-radius:3px;max-width:94%;word-wrap:break-word;flex-shrink:0}
 .pmsg b:first-child{display:block;font-family:var(--px);font-size:7px;letter-spacing:1px;margin-bottom:3px;opacity:.8}
 .pmsg.you{align-self:flex-end;background:#306230;color:#9bbc0f}
 .pmsg.prof{align-self:flex-start;display:block}
