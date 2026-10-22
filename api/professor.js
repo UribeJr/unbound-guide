@@ -49,6 +49,7 @@ function search(q, badges, wantAhead, diff) {
 }
 
 // ---------- protection ----------
+const INSTANCE = Math.random().toString(36).slice(2, 8);
 const hits = new Map(); // ip -> {min:[ts], day:[ts]}
 const cache = new Map(); // key -> {at, body}
 function limited(ip) {
@@ -119,8 +120,9 @@ module.exports = async (req, res) => {
   const c = cache.get(ckey);
   if (c && Date.now() - c.at < 6 * 3600e3) return res.status(200).json({ ...c.body, cached: true });
 
-  const ip = String(req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '?').split(',')[0].trim();
+  const ip = String(req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '?').split(',')[0].trim();
   const lim = limited(ip);
+  const hh = hits.get(ip); res.setHeader('X-Professor-Instance', INSTANCE); if (hh) res.setHeader('X-Professor-Remaining', `${Math.max(0, PER_MIN - hh.min.length)}/min ${Math.max(0, PER_DAY - hh.day.length)}/day`);
   if (lim) return res.status(429).json({ ok: false, resting: true, reason: 'rate', answer: lim === 'minute' ? "Whoa, slow down, trainer! The Professor can take 5 questions a minute — meanwhile, these pages match:" : "That's 20 questions today — the Professor's resting until tomorrow. These pages match your question:", sources: results.map(h => ({ p: h.p, t: h.t })) });
 
   if (!results.length) {
