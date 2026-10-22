@@ -510,7 +510,6 @@ body.night .proffab .pfring{box-shadow:0 0 0 3px #3b3e48,0 6px 14px rgba(0,0,0,.
 .pfhead .phav{background:#c4d96b;border:2px solid #0f380f;border-radius:50%;padding:2px;box-sizing:content-box;margin:0}
 .pfhead b{display:block;font-family:var(--px);font-size:8px;letter-spacing:1px}
 .pfhead span{font-size:11px;opacity:.8}
-.gbody:has(.prof){display:flex;flex-direction:column}
 .gear.open~#profLayer .proffab{display:none}
 #profLayer{position:fixed;inset:0;z-index:450;pointer-events:none;transform:none}
 #profLayer .proffab{pointer-events:auto}
@@ -541,3 +540,10 @@ body.mobile .proffab{right:14px;bottom:max(6px,env(safe-area-inset-bottom));widt
 body.mobile .proffab .pfq{top:-4px;right:-7px;transform:scale(.85)}
 body.mobile .proffab .pfav{width:44px;height:44px;margin-bottom:-5px}
 body.mobile .proffab .pftip{display:none}
+
+/* tab row: fit 6 tabs without crushing (no :has / newer CSS) */
+.gtabs{display:flex;flex-wrap:nowrap}
+.gtabs button{flex:1 1 0;min-width:0;padding:9px 1px;font-size:7px;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:clip;display:flex;align-items:center;justify-content:center;gap:3px}
+.gtabs .tabav{width:14px;height:14px;image-rendering:pixelated;border-radius:50%;background:#c4d96b;flex:none}
+.gtabs button[data-tab="trainers"]{flex-grow:1.35}
+.gbody.pchat{display:flex;flex-direction:column}

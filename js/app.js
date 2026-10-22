@@ -2,7 +2,9 @@
    950 pages; only the leaves near the open spread exist in the DOM. */
 (function(){
 const KEY='unbound-guide-v1';
-const S=Object.assign({caught:{},items:{},trainers:{},badges:{},diff:{},page:0,loc:'route-1',sync:true,tab:'wild',night:false,intro:true},JSON.parse(localStorage.getItem(KEY)||'{}'));
+const S=Object.assign({caught:{},items:{},trainers:{},badges:{},diff:{},page:0,loc:'route-1',sync:true,tab:'wild',night:false,intro:true},(()=>{try{const o=JSON.parse(localStorage.getItem(KEY)||'{}');return o&&typeof o==='object'?o:{};}catch(e){return {};}})());
+['caught','items','trainers','badges','diff'].forEach(k=>{ if(!S[k]||typeof S[k]!=='object') S[k]={}; });
+if(!['wild','items','trainers','badges','prof','settings'].includes(S.tab)) S.tab='wild';
 if(!S.diff) S.diff={};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
 const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
@@ -306,7 +308,7 @@ function renderGear(){
     h+=`<div class="badgegrid">${BADGES.map((b,i)=>`<button class="bslot ${S.badges[b.id]?'on':''}" style="--bc:${b.color}" data-badge="${b.id}"><div class="bi">${badgeSVG(b.id,30,S.badges[b.id]?'color':'ghost')}</div><b>${b.name.toUpperCase()}</b>${b.leader}<br><span style="opacity:.75">${b.type}</span></button>`).join('')}</div>
       <p style="font-size:11px;margin:10px 2px 0;line-height:1.3">Tap a badge to mark it earned. Use the badge tabs under the book to open each leader's spread.</p>`;
   }
-  body.innerHTML=h;
+  body.innerHTML=h; body.classList.toggle('pchat',S.tab==='prof');
   if(S.tab==='prof'&&window.Professor) Professor.mount();
   syncMarks();
 }
@@ -436,7 +438,8 @@ document.addEventListener('touchend',e=>{ if(tx===null) return; const dx=e.chang
 $('#badgestrip').innerHTML=`<button class="btab ch" title="Contents"><span class="bico"></span><span>Contents<small>Frozen Hts.</small></span></button>`+
   BADGES.map((b,i)=>`<button class="btab" style="--bc:${b.color}" data-badge="${b.id}" title="${b.name}: ${b.leader} (${b.type}). Opens the gym spread, p.${B.gyms[i].page}."><span class="bico"><span class="g">${badgeSVG(b.id,22,'dim')}</span><span class="c">${badgeSVG(b.id,22)}</span></span><span>${b.name.replace(' Badge','')}<small>${b.gym}</small></span></button>`).join('');
 
+// expose before the first layout/renderGear: the Professor tab reads it while rendering
+window.__guide={go,gotoPage,setSpread,openGear,renderGear,state:S,N,book:B,save,annotateVisible};
 window.addEventListener('resize',layout);
 layout();
-window.__guide={go,gotoPage,setSpread,openGear,renderGear,state:S,N,book:B,save,annotateVisible};
 })();

@@ -7,13 +7,13 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function G(){ return window.__guide; }
   function progress(){
-    var S=G().state, badges=(window.BADGES||[]).filter(function(b){return S.badges[b.id];}).length;
+    var g=G(), S=(g&&g.state)||{}; var bd=S.badges||{}; var badges=(window.BADGES||[]).filter(function(b){return bd[b.id];}).length;
     var next=Math.min(badges+1,8);
     return { badges: badges, diff: (S.diff&&S.diff[next])||'Vanilla', page: S.page|0 };
   }
 
   // Original 16x16 pixel-art professor bust (not based on any official sprite).
-  var OAK='img/prof/oak-bust.png?v=6'; // Professor Oak, Pokémon FireRed/LeafGreen trainer front pic (pret/pokefirered)
+  var OAK='img/prof/oak-bust.png?v=7'; // Professor Oak, Pokémon FireRed/LeafGreen trainer front pic (pret/pokefirered)
   function avatar(sz,cls){ return '<img class="'+(cls||'pav')+'" src="'+OAK+'" width="'+sz+'" height="'+sz+'" alt="" aria-hidden="true" draggable="false">'; }
   function fmt(t){
     var max=(G()&&G().N)||926;
@@ -70,7 +70,7 @@
     try{ if(g&&g.openGear){ g.state.tab='prof'; try{g.save&&g.save();}catch(_){} g.openGear(true); g.renderGear&&g.renderGear(); } }catch(err){ window.console&&console.warn('Professor open failed, using fallback',err); }
     // Safe fallback: if the PokéGear did not open or is still off-screen, force it open with inline styles.
     setTimeout(function(){ if(!gear) return; if(!gearShown(gear)){ gear.classList.add('open','pforce'); gear.style.transform='none'; gear.style.visibility='visible'; gear.style.opacity='1';
-        var b=document.getElementById('gbody'); if(b&&!b.querySelector('.prof')){ b.innerHTML=html(); mount(); } }
+        } var b=document.getElementById('gbody'); if(b&&!document.getElementById('pq')){ if(g&&g.state){ g.state.tab='prof'; } b.innerHTML=html(); b.classList.add('pchat'); mount(); var tb=document.querySelectorAll('.gtabs button'); for(var k=0;k<tb.length;k++) tb[k].classList.toggle('on',tb[k].getAttribute('data-tab')==='prof'); }
       var i=document.getElementById('pq'); if(i&&!document.body.classList.contains('mobile')) try{i.focus({preventScroll:true});}catch(_){ i.focus(); } },480);
     window.track&&track('professor_open',{});
   }
