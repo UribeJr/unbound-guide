@@ -63,6 +63,28 @@ function limited(ip) {
   return null;
 }
 
+
+function starterLine(st, badges) {
+  const n = st.tiers.filter(t => badges >= t[0]).pop()[1]; const nx = st.tiers.find(t => t[0] > badges);
+  return { n, nx, text: `${st.region}: ${n === 3 ? 'all 3 (' + st.mons.join(', ') + ')' : 'pick ' + n + ' of 3 (' + st.mons.join(' / ') + ')'} from the ${st.npc}, ${st.where} (p.${st.page})` + (nx ? ` — your next pick opens at ${nx[0]} badges.` : '.') };
+}
+function starterAnswer(q, badges) {
+  const S = INDEX.starters, b = `${badges} badge${badges === 1 ? '' : 's'}`;
+  const mon = S.flatMap(st => st.mons.map(m => ({ st, m }))).find(o => new RegExp('\\b' + o.m + '\\b', 'i').test(q));
+  const src = l => l.map(st => ({ p: st.page, t: st.npc }));
+  if (mon) {
+    const { st, m } = mon, L = starterLine(st, badges);
+    const ans = `${/\b(can|could|may)\b/i.test(q) ? "Yes! " : ""}${m} is one of the ${st.region} starters, handed out by the ${st.npc} — ${st.where} (p.${st.page}). With ${b} you can ${L.n === 3 ? 'take all 3' : 'pick ' + L.n + ' of the 3'} (${st.mons.join(', ')}), so ${m} is yours to choose${L.n < 3 ? ' — choose wisely; your next pick opens at ' + L.nx[0] + ' badges' : ''}. (${st.region} picks unlock at ${st.tiers.map(t => t[0]).join('/')} badges.)`;
+    return { ok: true, answer: ans, sources: src([st]), model: 'computed' };
+  }
+  const regs = S.filter(st => new RegExp('\\b' + st.region + '\\b', 'i').test(q));
+  if (/\bstarters?\b/i.test(q)) {
+    const list = regs.length ? regs : S;
+    return { ok: true, answer: `With ${b}, here's who you can claim:\n${list.map(st => '• ' + starterLine(st, badges).text).join('\n')}\nEach Starters Lady hands out one more as your badge count grows — come back after your next gym!`, sources: src(list), model: 'computed' };
+  }
+  return null;
+}
+
 const SYS = `You are "the Professor", a warm, upbeat Pokémon professor helping a trainer use a fan-made Pokémon Unbound walkthrough journal.
 Rules:
 - Answer ONLY from the GUIDE EXCERPTS provided. If they don't cover the question, say the guide doesn't cover that (briefly) and suggest the closest page if any. Never invent Pokémon, levels, locations or items.
@@ -131,13 +153,9 @@ module.exports = async (req, res) => {
     const out = { ok: true, answer: "Hmm, I couldn't find anything in this guide about that — I only know what's written in the journal. Try asking about a route, gym, trainer, item or Pokémon!", sources: [], model: null };
     cache.set(ckey, { at: Date.now(), body: out }); return res.status(200).json(out);
   }
-  // Starter availability is pure lookup — answer it deterministically (exact, free, works even when Groq is down).
-  if (/\b(which|what|can i|how many|available|get|claim)\b.*\bstarters?\b|\bstarters?\b.*\b(get|available|claim|now|yet)\b|^starters?\??$/i.test(q.trim())) {
-    const lines = INDEX.starters.map(st => { const n = st.tiers.filter(t => badges >= t[0]).pop()[1]; const nx = st.tiers.find(t => t[0] > badges);
-      return `• ${st.region}: ${n === 3 ? 'all 3' : n + ' of 3'} (${n === 3 ? st.mons.join(', ') : 'your choice of ' + st.mons.join(' / ')}) from the ${st.npc}, ${st.where} (p.${st.page})` + (nx ? ` — the next pick opens at ${nx[0]} badges.` : '.'); });
-    const out = { ok: true, answer: `With ${badges} badge${badges === 1 ? '' : 's'}, here's who you can claim:\n${lines.join('\n')}\nEach Starters Lady hands out one more as your badge count grows — come back after your next gym!`, sources: uniqP(INDEX.starters.map(st => ({ p: st.page, t: st.npc }))), model: 'computed' };
-    cache.set(ckey, { at: Date.now(), body: out }); return res.status(200).json(out);
-  }
+  // Starter questions are pure lookup — answer deterministically (exact, free, works even when Groq is down).
+  const sAns = starterAnswer(q, badges);
+  if (sAns) { cache.set(ckey, { at: Date.now(), body: sAns }); return res.status(200).json(sAns); }
   if (forced) return fallback(res, results, 'forced');
 
   let facts = '';
