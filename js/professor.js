@@ -13,26 +13,8 @@
   }
 
   // Original 16x16 pixel-art professor bust (not based on any official sprite).
-  var PX=[
-    '.....KKKKKK.....',
-    '...KKHHHHHHKK...',
-    '..KHHgHHHHgHHK..',
-    '..KHgHHHHHHgHK..',
-    '..KHSSSSSSSSHK..',
-    '..KSGGGSSGGGSK..',
-    '..KSGEGSSGEGSK..',
-    '..KSSSSssSSSSK..',
-    '...KSSMMMMSSK...',
-    '....KSSSSSSK....',
-    '..KKWKsSSsKWKK..',
-    '.KWWWKTRRTKWWWK.',
-    'KWWwWWTRRTWWwWWK',
-    'KWWwWWTRRTWWwWWK',
-    'KWWwWWWTTWWWwWWK',
-    'KKKKKKKKKKKKKKKK'];
-  var PC={K:'#2a1e1a',H:'#8a8580',g:'#c9c4bd',S:'#f1c59a',s:'#d49b6b',G:'#5b7fb0',E:'#1d1d2b',M:'#6b6660',W:'#f6f6f2',w:'#c7ccd6',T:'#2f8f7a',R:'#c0392b'};
-  function avatar(sz,cls){ var r=''; PX.forEach(function(row,y){ for(var x=0;x<16;x++){ var c=PC[row[x]]; if(c) r+='<rect x="'+x+'" y="'+y+'" width="1.02" height="1.02" fill="'+c+'"/>'; } });
-    return '<svg class="'+(cls||'pav')+'" viewBox="0 0 16 16" width="'+sz+'" height="'+sz+'" shape-rendering="crispEdges" aria-hidden="true">'+r+'</svg>'; }
+  var OAK='img/prof/oak-bust.png?v=5'; // Professor Oak, Pokémon FireRed/LeafGreen trainer front pic (pret/pokefirered)
+  function avatar(sz,cls){ return '<img class="'+(cls||'pav')+'" src="'+OAK+'" width="'+sz+'" height="'+sz+'" alt="" aria-hidden="true" draggable="false">'; }
   function fmt(t){
     var max=(G()&&G().N)||926;
     return esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
@@ -44,10 +26,10 @@
     return '<div class="psrc">'+list.map(function(s){return '<a class="pcite" href="#" data-goto="'+s.p+'" title="'+esc(s.t)+'">p.'+s.p+'</a>';}).join(' ')+'</div>';
   }
   function bubbles(){
-    if(!log.length) return '<div class="pmsg prof"><b>'+avatar(16)+'PROF.</b>Hello, trainer! Ask me anything this journal covers — routes, gyms, trainers, items or where to catch a Pokémon. I\'ll point you to the right page.</div>';
+    if(!log.length) return '<div class="pmsg prof"><b>'+avatar(18)+'PROF.</b>Hello, trainer! Ask me anything this journal covers — routes, gyms, trainers, items or where to catch a Pokémon. I\'ll point you to the right page.</div>';
     return log.map(function(m){
-      return '<div class="pmsg '+m.who+(m.resting?' resting':'')+'"><b>'+(m.who==='you'?'YOU':'PROF.')+'</b>'+(m.who==='you'?esc(m.text):fmt(m.text))+(m.who==='prof'?srcs(m.sources):'')+'</div>';
-    }).join('')+(busy?'<div class="pmsg prof typing"><b>'+avatar(16)+'PROF.</b><span class="dots"><i></i><i></i><i></i></span></div>':'');
+      return '<div class="pmsg '+m.who+(m.resting?' resting':'')+'"><b>'+(m.who==='you'?'YOU':avatar(18)+'PROF.')+'</b>'+(m.who==='you'?esc(m.text):fmt(m.text))+(m.who==='prof'?srcs(m.sources):'')+'</div>';
+    }).join('')+(busy?'<div class="pmsg prof typing"><b>'+avatar(18)+'PROF.</b><span class="dots"><i></i><i></i><i></i></span></div>':'');
   }
   function html(){
     if(!WEB) return '<div class="empty">THE PROFESSOR NEEDS<br>THE ONLINE GUIDE</div><p class="gdisc">The AI help chat only works on the hosted site. Open <a class="gearlink" href="https://unbound-guide.vercel.app" target="_blank" rel="noopener">unbound-guide.vercel.app</a> to ask the Professor.</p>';
@@ -77,8 +59,10 @@
   document.addEventListener('click',function(e){
     var c=e.target.closest&&e.target.closest('[data-pchip]'); if(c){ e.preventDefault(); return ask(c.dataset.pchip); }
     var a=e.target.closest&&e.target.closest('.pcite'); if(a){ e.preventDefault(); if(document.body.classList.contains('mobile')) G().openGear(false); }
-    var fb=e.target.closest&&e.target.closest('#profFab'); if(fb){ var S=G().state; S.tab='prof'; G().save(); G().openGear(true); G().renderGear&&G().renderGear(); }
+    var fb=e.target.closest&&e.target.closest('#profFab'); if(fb){ e.preventDefault(); openProf(); }
   },true);
+  var lastOpen=0;
+  function openProf(){ var now=Date.now(); if(now-lastOpen<350) return; lastOpen=now; var g=G(); if(!g||!g.openGear){ return; } g.state.tab='prof'; g.save&&g.save(); g.openGear(true); g.renderGear&&g.renderGear(); setTimeout(function(){ var i=document.getElementById('pq'); if(i&&!document.body.classList.contains('mobile')) i.focus(); },60); }
   var fillFab=function(){ var f=document.getElementById('profFab'); if(f&&!f.dataset.av){ f.dataset.av=1; f.innerHTML='<span class="pfring">'+avatar(44,'pav pfav')+'</span><span class="pfq" aria-hidden="true">?</span><span class="pftip" role="tooltip">Ask the Professor</span>'; } };
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fillFab):fillFab();
   if(!WEB){ var hideFab=function(){ var f=document.getElementById('profFab'); if(f) f.hidden=true; }; document.readyState==='loading'?document.addEventListener('DOMContentLoaded',hideFab):hideFab(); }

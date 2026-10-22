@@ -91,6 +91,7 @@ function endPage(i){
   <div class="box"><b>Your file:</b><div id="wrapStats" style="font-family:var(--px);font-size:8px;line-height:2;margin-top:6px"></div></div>
   <h3 class="bar">Credits</h3>
   <p class="credit">Walkthrough text, maps, screenshots, sprites and gym data © <a href="https://unboundwiki.com/walkthrough/" target="_blank" rel="noopener">unboundwiki.com</a>, credited and linked back to the wiki. Pokémon Unbound is a fan game by Skeli. Pokémon © Nintendo / Game Freak / Creatures. This is an unofficial fan guide.</p>
+  <p class="credit">Professor avatar: Professor Oak trainer front pic from Pokémon FireRed/LeafGreen, via the <a href="https://github.com/pret/pokefirered/blob/master/graphics/trainers/front_pics/professor_oak_front_pic.png" target="_blank" rel="noopener">pret/pokefirered</a> decompilation (© Nintendo / Game Freak / Creatures).</p>
   <p class="credit">Data rules: only what the wiki prints is shown. Anything it leaves out is marked <span class="tbd">TBD</span>.</p>
   <p class="disc">Fan project, not affiliated with Nintendo, Game Freak, or Skeli Games; data and screenshots from <a href="https://unboundwiki.com/walkthrough/" target="_blank" rel="noopener">unboundwiki.com</a>.</p>
   <p><a class="report" href="https://github.com/UribeJr/unbound-guide/issues/new" target="_blank" rel="noopener">✎ Report an error / wrong data</a></p>

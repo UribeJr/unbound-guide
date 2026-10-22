@@ -489,21 +489,23 @@ body.night .topbar .brand,body.night .badgestrip{filter:brightness(.82)}
 .gear .gdisc{font-size:10px;line-height:1.3;margin:10px 4px 0;opacity:.85}
 
 /* ---------- The Professor (AI help chat) ---------- */
-.proffab{position:fixed;right:20px;bottom:104px;z-index:60;width:62px;height:62px;padding:0;border:none;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.proffab{position:fixed;right:20px;bottom:104px;z-index:60;width:58px;height:58px;padding:0;border:none;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .proffab .pfring{position:absolute;inset:0;border-radius:50%;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;
   background:radial-gradient(circle at 50% 38%,#cfe8f5 0 38%,#7fb7d6 70%,#4b86a8);border:3px solid #1b1b1b;box-shadow:0 0 0 3px #f6e7c8,0 6px 14px rgba(0,0,0,.35)}
-.proffab .pfav{display:block;image-rendering:pixelated;margin-bottom:-2px;animation:pbob 1.6s steps(2) infinite}
+.proffab .pfav{display:block;width:54px;height:54px;image-rendering:pixelated;margin-bottom:-6px;pointer-events:none;animation:pbob 1.6s steps(2) infinite}
+.pav{image-rendering:pixelated;-ms-interpolation-mode:nearest-neighbor;object-fit:cover}
+.proffab *{pointer-events:none}
 @keyframes pbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 .proffab .pfq{position:absolute;top:-6px;right:-8px;width:24px;height:22px;background:#fff;border:2.5px solid #1b1b1b;border-radius:10px;font:700 14px/17px var(--px,monospace);font-size:10px;line-height:17px;color:#c0392b;text-align:center;box-shadow:0 2px 0 rgba(0,0,0,.25)}
 .proffab .pfq::after{content:"";position:absolute;left:3px;bottom:-6px;border:4px solid transparent;border-top:5px solid #1b1b1b;border-left:2px solid transparent}
-.proffab .pftip{position:absolute;right:72px;top:50%;transform:translateY(-50%) translateX(6px);white-space:nowrap;background:#1b1b1b;color:#f6e7c8;font:600 15px/1 var(--hand,sans-serif);padding:7px 10px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s}
+.proffab .pftip{position:absolute;right:68px;top:50%;transform:translateY(-50%) translateX(6px);white-space:nowrap;background:#1b1b1b;color:#f6e7c8;font:600 15px/1 var(--hand,sans-serif);padding:7px 10px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s}
 .proffab:hover .pftip,.proffab:focus-visible .pftip{opacity:1;transform:translateY(-50%)}
 .proffab:hover .pfring,.proffab:focus-visible .pfring{box-shadow:0 0 0 3px #ffd23f,0 6px 14px rgba(0,0,0,.35)}
 .proffab:focus-visible{outline:none}
 .proffab[hidden]{display:none}
 @media (prefers-reduced-motion:reduce){.proffab .pfav{animation:none}}
 body.night .proffab .pfring{box-shadow:0 0 0 3px #3b3e48,0 6px 14px rgba(0,0,0,.5)}
-.pav{image-rendering:pixelated;vertical-align:-3px;margin-right:4px}
+.pav{image-rendering:pixelated;vertical-align:-3px;margin-right:4px;border-radius:50%;background:#c4d96b}
 .pfhead{flex:none;display:flex;align-items:center;gap:8px;padding:2px 2px 6px;border-bottom:2px dashed #306230}
 .pfhead .phav{background:#c4d96b;border:2px solid #0f380f;border-radius:50%;padding:2px;box-sizing:content-box;margin:0}
 .pfhead b{display:block;font-family:var(--px);font-size:8px;letter-spacing:1px}
@@ -534,5 +536,5 @@ body.night .proffab .pfring{box-shadow:0 0 0 3px #3b3e48,0 6px 14px rgba(0,0,0,.
 @keyframes pdot{0%,100%{opacity:.2}50%{opacity:1}}
 body.mobile .proffab{right:14px;bottom:max(6px,env(safe-area-inset-bottom));width:48px;height:48px}
 body.mobile .proffab .pfq{top:-4px;right:-7px;transform:scale(.85)}
-body.mobile .proffab .pfav{width:34px;height:34px}
+body.mobile .proffab .pfav{width:44px;height:44px;margin-bottom:-5px}
 body.mobile .proffab .pftip{display:none}

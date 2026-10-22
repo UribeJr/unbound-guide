@@ -47,3 +47,5 @@ Screenshots, maps, sprites and text © their creators via unboundwiki.com. This 
 
 ## Live site & hosting
 Static site with no build step. `index.html` is at the root and it works from `file://` or any static host (deployed on Vercel). Credit: all walkthrough content comes from **[unboundwiki.com](https://unboundwiki.com)**. Pokémon Unbound is a fan game by Skeli; this guide is an unofficial fan project and is not affiliated with Nintendo, Game Freak, The Pokémon Company or Prima.
+
+The Professor chat avatar (`img/prof/oak-bust.png`, full sprite `img/prof/oak-frlg.png`) is Professor Oak's trainer front pic from Pokémon FireRed/LeafGreen, taken from the [pret/pokefirered](https://github.com/pret/pokefirered) decompilation: [`graphics/trainers/front_pics/professor_oak_front_pic.png`](https://github.com/pret/pokefirered/blob/master/graphics/trainers/front_pics/professor_oak_front_pic.png). Palette index 0 was made transparent, then the sprite was cropped to the bust and scaled 4x nearest-neighbor. © Nintendo / Game Freak / Creatures.
