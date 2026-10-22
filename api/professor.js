@@ -131,10 +131,17 @@ module.exports = async (req, res) => {
     const out = { ok: true, answer: "Hmm, I couldn't find anything in this guide about that — I only know what's written in the journal. Try asking about a route, gym, trainer, item or Pokémon!", sources: [], model: null };
     cache.set(ckey, { at: Date.now(), body: out }); return res.status(200).json(out);
   }
+  // Starter availability is pure lookup — answer it deterministically (exact, free, works even when Groq is down).
+  if (/\b(which|what|can i|how many|available|get|claim)\b.*\bstarters?\b|\bstarters?\b.*\b(get|available|claim|now|yet)\b|^starters?\??$/i.test(q.trim())) {
+    const lines = INDEX.starters.map(st => { const n = st.tiers.filter(t => badges >= t[0]).pop()[1]; const nx = st.tiers.find(t => t[0] > badges);
+      return `• ${st.region}: ${n === 3 ? 'all 3' : n + ' of 3'} (${n === 3 ? st.mons.join(', ') : 'your choice of ' + st.mons.join(' / ')}) from the ${st.npc}, ${st.where} (p.${st.page})` + (nx ? ` — the next pick opens at ${nx[0]} badges.` : '.'); });
+    const out = { ok: true, answer: `With ${badges} badge${badges === 1 ? '' : 's'}, here's who you can claim:\n${lines.join('\n')}\nEach Starters Lady hands out one more as your badge count grows — come back after your next gym!`, sources: uniqP(INDEX.starters.map(st => ({ p: st.page, t: st.npc }))), model: 'computed' };
+    cache.set(ckey, { at: Date.now(), body: out }); return res.status(200).json(out);
+  }
   if (forced) return fallback(res, results, 'forced');
 
   let facts = '';
-  if (/\bstarters?\b/i.test(q)) facts = 'COMPUTED FACT (trust this): with ' + badges + ' badges the trainer can claim — ' + INDEX.starters.map(st => { const n = st.tiers.filter(t => badges >= t[0]).pop()[1]; return `${st.region}: ${n} of 3 (${st.mons.join('/')}) from ${st.npc}, ${st.where} p.${st.page}` + (n < 3 ? `; next one at ${st.tiers.find(t => t[0] > badges)[0]} badges` : ''); }).join(' | ') + '\n\n';
+  if (/\bstarters?\b/i.test(q)) facts = 'COMPUTED FACT (trust this): with ' + badges + ' badges the trainer can claim — ' + INDEX.starters.map(st => { const n = st.tiers.filter(t => badges >= t[0]).pop()[1]; return `${st.region}: ${n} pick(s) — trainer chooses ANY ${n} of ${st.mons.join('/')} (any single one, e.g. ${st.mons[2]}, is available now)` from ${st.npc}, ${st.where} p.${st.page}` + (n < 3 ? `; next one at ${st.tiers.find(t => t[0] > badges)[0]} badges` : ''); }).join(' | ') + '\n\n';
   const ctx = facts + results.map(h => `[p.${h.p}]${h.ahead ? ' [AHEAD]' : ''} ${h.t}\n${h.x.slice(0, 1300)}`).join('\n\n');
   const messages = [
     { role: 'system', content: SYS.replace('{BADGES}', badges).replace('{DIFF}', diff) },
