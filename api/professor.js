@@ -141,7 +141,7 @@ module.exports = async (req, res) => {
   if (forced) return fallback(res, results, 'forced');
 
   let facts = '';
-  if (/\bstarters?\b/i.test(q)) facts = 'COMPUTED FACT (trust this): with ' + badges + ' badges the trainer can claim — ' + INDEX.starters.map(st => { const n = st.tiers.filter(t => badges >= t[0]).pop()[1]; return `${st.region}: ${n} pick(s) — trainer chooses ANY ${n} of ${st.mons.join('/')} (any single one, e.g. ${st.mons[2]}, is available now)` from ${st.npc}, ${st.where} p.${st.page}` + (n < 3 ? `; next one at ${st.tiers.find(t => t[0] > badges)[0]} badges` : ''); }).join(' | ') + '\n\n';
+  if (/\bstarters?\b/i.test(q) || INDEX.starters.some(st => st.mons.some(m => new RegExp('\\b' + m + '\\b', 'i').test(q)))) facts = 'COMPUTED FACT (trust this): with ' + badges + ' badges the trainer can claim — ' + INDEX.starters.map(st => { const n = st.tiers.filter(t => badges >= t[0]).pop()[1]; return `${st.region}: ${n} pick(s) — trainer chooses ANY ${n} of ${st.mons.join('/')} (any single one, e.g. ${st.mons[2]}, is available now) from ${st.npc}, ${st.where} p.${st.page}` + (n < 3 ? `; next one at ${st.tiers.find(t => t[0] > badges)[0]} badges` : ''); }).join(' | ') + '\n\n';
   const ctx = facts + results.map(h => `[p.${h.p}]${h.ahead ? ' [AHEAD]' : ''} ${h.t}\n${h.x.slice(0, 1300)}`).join('\n\n');
   const messages = [
     { role: 'system', content: SYS.replace('{BADGES}', badges).replace('{DIFF}', diff) },
