@@ -504,9 +504,9 @@ body.night .topbar .brand,body.night .badgestrip{filter:brightness(.82)}
 .pmsg{border:2px solid #306230;background:rgba(255,255,255,.14);padding:6px 8px;font-size:12px;line-height:1.35;border-radius:3px;max-width:94%;word-wrap:break-word}
 .pmsg b:first-child{display:block;font-family:var(--px);font-size:7px;letter-spacing:1px;margin-bottom:3px;opacity:.8}
 .pmsg.you{align-self:flex-end;background:#306230;color:#9bbc0f}
-.pmsg.prof{align-self:flex-start}
+.pmsg.prof{align-self:flex-start;display:block}
 .pmsg.resting{border-style:dashed}
-.pcite{display:inline-block;background:#0f380f;color:#9bbc0f!important;text-decoration:none;font-family:var(--px);font-size:8px;padding:2px 4px;border-radius:2px;margin:0 1px;vertical-align:1px}
+.pcite{display:inline-block;line-height:1.2;background:#0f380f;color:#9bbc0f!important;text-decoration:none;font-family:var(--px);font-size:8px;padding:2px 4px;border-radius:2px;margin:0 1px;vertical-align:1px}
 .pcite:hover{background:#306230}
 .psrc{margin-top:5px;display:flex;flex-wrap:wrap;gap:3px}
 .pchips{display:flex;flex-wrap:wrap;gap:4px}
