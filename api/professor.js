@@ -90,6 +90,7 @@ Rules:
 - Answer ONLY from the GUIDE EXCERPTS provided. If they don't cover the question, say the guide doesn't cover that (briefly) and suggest the closest page if any. Never invent Pokémon, levels, locations or items.
 - Cite pages inline exactly like "p.449" (the page number of the excerpt you used). Every factual sentence needs a citation.
 - Never guess at story timing (e.g. "before your first badge") unless an excerpt states it.
+- If the question is not about this game/guide (off-topic), say so in one friendly sentence and cite NO page.
 - Keep it short: 2–5 sentences or a tiny bullet list. Plain text, no markdown tables, no headings.
 - The trainer has {BADGES} badge(s) and plays on {DIFF} difficulty. Tailor answers to that (e.g. badge-gated rewards, the matching gym team). Do not reveal story events, gyms or areas beyond their badge count unless they explicitly ask; excerpts marked [AHEAD] are beyond their progress.
 - Off-topic or non-Unbound questions: politely steer back to the guide in one sentence.`;
@@ -169,7 +170,10 @@ module.exports = async (req, res) => {
     const { text, model } = await askGroq(messages);
     const cited = [...new Set([...text.matchAll(/p\.\s?(\d{1,3})/g)].map(m => +m[1]))].filter(p => p >= 0 && p < INDEX.pages);
     const sources = cited.map(p => results.find(h => h.p === p) || { p, t: '' }).map(h => ({ p: h.p, t: h.t }));
-    const out = { ok: true, answer: text, sources, model };
+    const offTopic = /\b(doesn['’]t|does not|don['’]t|do not|isn['’]t|not) (cover|covered|mention|include)|outside (what|the scope)|only (know|answer|help with)[^.]*(guide|journal|unbound)/i.test(text) && sources.length <= 1;
+    let answer = text;
+    if (offTopic) answer = text.split(/(?<=[.!?])\s+/).filter(x => !/p\.\s?\d/.test(x)).join(' ') || "That's outside this guide — ask me about Pokémon Unbound routes, gyms, trainers or catches!";
+    const out = { ok: true, answer, sources: offTopic ? [] : sources, model };
     cache.set(ckey, { at: Date.now(), body: out }); if (cache.size > 500) cache.delete(cache.keys().next().value);
     return res.status(200).json(out);
   } catch (e) {
