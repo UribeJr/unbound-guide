@@ -5,7 +5,7 @@ const KEY='unbound-guide-v1';
 const S=Object.assign({caught:{},items:{},trainers:{},badges:{},diff:{},page:0,loc:'route-1',sync:true,tab:'wild',night:false,intro:true},(()=>{try{const o=JSON.parse(localStorage.getItem(KEY)||'{}');return o&&typeof o==='object'?o:{};}catch(e){return {};}})());
 /* v9: returning visitors skip the desk intro unless they explicitly chose it; text size + view mode */
 try{ if(localStorage.getItem(KEY) && !S.introChoice) S.intro=false; }catch(e){}
-S.tz=Math.min(1.5,Math.max(1,+S.tz||1)); if(!['auto','page','width','single'].includes(S.view)) S.view='auto';
+S.tz=Math.min(1.5,Math.max(.8,+S.tz||1)); S.tzv=10; if(!['auto','page','width','single'].includes(S.view)) S.view='auto';
 ['caught','items','trainers','badges','diff'].forEach(k=>{ if(!S[k]||typeof S[k]!=='object') S[k]={}; });
 if(!['wild','items','trainers','badges','prof','settings'].includes(S.tab)) S.tab='wild';
 if(!S.diff) S.diff={};
@@ -368,12 +368,13 @@ function wantMobile(){
   if(window.innerWidth<820 || (window.innerWidth<1000 && window.innerHeight>window.innerWidth)) return true;
   if(S.view==='single') return true; if(S.view!=='auto') return false;
   // auto: two-page spread only when it can render body text at >=14px (base 12px) when fitted to width
-  return (window.innerWidth-16)/1200*12 < 14;
+  return (window.innerWidth-16)/1200*12 < 13;
 }
 function layout(){
   const m = wantMobile();
   document.body.classList.toggle('single',m && window.innerWidth>=820);
-  document.documentElement.style.setProperty('--mz',(1.25*S.tz).toFixed(3));
+  document.documentElement.style.setProperty('--mz',((window.innerWidth<820?1.17:1.1)*S.tz).toFixed(3));
+  document.body.classList.toggle('spreadv',!m);
   const tv=$('#tzVal'); if(tv) tv.textContent=Math.round(S.tz*100)+'%';
   if(m!==mobile){
     const p=mobile===null? Math.min(N-1,S.page||0) : curPage();
@@ -385,7 +386,7 @@ function layout(){
   if(!mobile){
     const st=$('#stage'), w=st.offsetWidth, h=st.offsetHeight, W=document.documentElement.clientWidth||innerWidth, H=window.innerHeight;
     const avH=H-54-64-8, fp=Math.min((W-16)/w,avH/h,1.6), fw=Math.min((W-16)/w,1.8);
-    let base = S.view==='width' ? fw : S.view==='page' ? fp : (fp*12>=14 ? fp : fw);
+    let base = S.view==='width' ? fw : S.view==='page' ? fp : (fp*12>=13 ? fp : fw);
     const sc=base*S.tz, sw=w*sc, sh=h*sc;
     const left=Math.max(8,(W-sw)/2), top=54+Math.max(4,(avH-sh)/2);
     st.style.setProperty('--scale',sc); st.style.left=left+'px'; st.style.top=top+'px';
@@ -394,7 +395,7 @@ function layout(){
     if(sp){ sp.style.top=(top+sh+72)+'px'; sp.style.left=(left+sw-1)+'px'; }
   } else { document.documentElement.classList.remove('scrolly'); }
 }
-function setTz(v){ S.tz=Math.round(Math.min(1.5,Math.max(1,v))*10)/10; save(); layout(); window.track&&track('text_size',{tz:S.tz}); }
+function setTz(v){ S.tz=Math.round(Math.min(1.5,Math.max(.8,v))*10)/10; save(); layout(); window.track&&track('text_size',{tz:S.tz}); }
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{
   let t=e.target.closest('button,[data-full],.legend li');

@@ -563,11 +563,11 @@ body.mobile #stageSpacer{display:none}
 .viewseg button{font-family:var(--cond);font-weight:800;font-size:12px;padding:4px 7px;border-radius:3px;border:1.5px solid currentColor;background:transparent;cursor:pointer}
 .viewseg button.on{background:#ffd23f;color:#1d1a16;border-color:#1d1a16}
 /* single-page reading view: content zoom reflows (pages scroll), base 125% so body >= 15px */
-.mpage .pin-in{zoom:var(--mz,1.25);min-height:calc(100% / var(--mz,1.25))}
+.mpage .pin-in{zoom:var(--mz,1.1);min-height:calc(100% / var(--mz,1.1))}
 body.single .mbook{left:50%;right:auto;width:min(720px,calc(100vw - 150px));transform:translateX(-50%)}
-/* minimum label sizes (base px; spread is never scaled below ~1.17 in auto, single view x1.25) */
-.page .tbd,.page .tm i,.page .tm .or,.page .gt th,.page .zoom,.page .steps li .pg{font-size:9.5px}
-.page .ty,.page .tag,.page .tcard .tnote,.page figcaption,.page .folio,.page .wcard small,.page .gm i{font-size:10px}
+/* minimum label sizes (base px; spread is never scaled below ~1.17 in auto, single view x1.1, mobile x1.17) */
+.page .tbd,.page .tm i,.page .tm .or,.page .gt th,.page .zoom,.page .steps li .pg{font-size:10px}
+.page .ty,.page .tag,.page .tcard .tnote,.page figcaption,.page .folio,.page .wcard small,.page .gm i{font-size:10.5px}
 @media (max-width:819px){body.mobile .topbar .zoomctl button{min-width:30px;height:30px;font-size:14px}
 body.mobile .topbar .zoomctl span{display:none}}
 @media (max-width:480px){ body.mobile .topbar .tset{display:none} }
@@ -589,3 +589,7 @@ body.mobile .topbar .zoomctl span{display:none}}
 }
 .mpage .tcard .tn{flex-wrap:wrap}
 .mpage .info{max-width:100%;flex-wrap:wrap}
+
+/* v10: on the desktop spread Oak sits beside the PREV/NEXT row, clear of the right-hand chapter tabs */
+body.spreadv .proffab{right:auto;left:calc(50% + 160px);bottom:4px;width:52px;height:52px}
+body.spreadv .proffab .pftip{right:auto;left:60px}
