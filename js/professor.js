@@ -13,7 +13,7 @@
   }
 
   // Original 16x16 pixel-art professor bust (not based on any official sprite).
-  var OAK='img/prof/oak-bust.png?v=11'; // Professor Oak, Pokémon FireRed/LeafGreen trainer front pic (pret/pokefirered)
+  var OAK='img/prof/oak-bust.png?v=12'; // Professor Oak, Pokémon FireRed/LeafGreen trainer front pic (pret/pokefirered)
   function avatar(sz,cls){ return '<img class="'+(cls||'pav')+'" src="'+OAK+'" width="'+sz+'" height="'+sz+'" alt="" aria-hidden="true" draggable="false">'; }
   function fmt(t,sources){
     var max=(G()&&G().N)||960, am={}; (sources||[]).forEach(function(s){ if(s.a) am[s.p]=s.a; });
