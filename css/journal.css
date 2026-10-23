@@ -547,3 +547,45 @@ body.mobile .proffab .pftip{display:none}
 .gtabs .tabav{width:14px;height:14px;image-rendering:pixelated;border-radius:50%;background:#c4d96b;flex:none}
 .gtabs button[data-tab="trainers"]{flex-grow:1.35}
 .gbody.pchat{display:flex;flex-direction:column}
+
+/* ===== v9 readability ===== */
+/* desktop stage is positioned by layout() (top-left origin) so it can grow past the viewport and scroll */
+.stage{left:0;top:54px;transform-origin:0 0;transform:scale(var(--scale,1))}
+html.scrolly body{overflow:auto}
+#stageSpacer{position:absolute;width:1px;height:1px;pointer-events:none}
+body.mobile #stageSpacer{display:none}
+/* header text-size control */
+.zoomctl{display:flex;align-items:center;gap:2px;background:rgba(0,0,0,.25);border-radius:6px;padding:2px}
+.zoomctl button{font-family:var(--cond);font-weight:800;font-size:15px;line-height:1;min-width:34px;height:32px;border:none;border-radius:4px;background:#f3ead3;color:#1d1a16;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.45)}
+.zoomctl button:active{transform:translateY(2px);box-shadow:none}
+.zoomctl span{font-family:var(--cond);font-weight:700;font-size:13px;color:#fff;min-width:40px;text-align:center}
+.viewseg{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.viewseg button{font-family:var(--cond);font-weight:800;font-size:12px;padding:4px 7px;border-radius:3px;border:1.5px solid currentColor;background:transparent;cursor:pointer}
+.viewseg button.on{background:#ffd23f;color:#1d1a16;border-color:#1d1a16}
+/* single-page reading view: content zoom reflows (pages scroll), base 125% so body >= 15px */
+.mpage .pin-in{zoom:var(--mz,1.25);min-height:calc(100% / var(--mz,1.25))}
+body.single .mbook{left:50%;right:auto;width:min(720px,calc(100vw - 150px));transform:translateX(-50%)}
+/* minimum label sizes (base px; spread is never scaled below ~1.17 in auto, single view x1.25) */
+.page .tbd,.page .tm i,.page .tm .or,.page .gt th,.page .zoom,.page .steps li .pg{font-size:9.5px}
+.page .ty,.page .tag,.page .tcard .tnote,.page figcaption,.page .folio,.page .wcard small,.page .gm i{font-size:10px}
+@media (max-width:819px){body.mobile .topbar .zoomctl button{min-width:30px;height:30px;font-size:14px}
+body.mobile .topbar .zoomctl span{display:none}}
+@media (max-width:480px){ body.mobile .topbar .tset{display:none} }
+
+#printbook{display:none}
+/* print: clean single-column journal pages, no desk/UI */
+@media print{
+  @page{size:auto;margin:12mm}
+  html,body{height:auto!important;overflow:visible!important;background:#fff!important}
+  body>*{display:none!important}
+  body>#printbook{display:block!important}
+  #printbook .ppage{position:relative!important;inset:auto!important;transform:none!important;box-shadow:none!important;break-after:page;break-inside:auto}
+  #printbook .page{position:relative!important;inset:auto!important;overflow:visible!important;box-shadow:none!important;height:auto!important}
+  #printbook .pin-in{zoom:1;min-height:0;position:relative!important;inset:auto!important}
+  #printbook .page,#printbook .page::before,#printbook .page::after{background-image:none!important;background-color:#fff!important}
+  #printbook .wear-ring{display:none!important}
+  #printbook .corner,#printbook .pin,#printbook .chk,#printbook .tdone,#printbook .stampbtn,#printbook .diffs{display:none!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.mpage .tcard .tn{flex-wrap:wrap}
+.mpage .info{max-width:100%;flex-wrap:wrap}

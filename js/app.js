@@ -3,6 +3,9 @@
 (function(){
 const KEY='unbound-guide-v1';
 const S=Object.assign({caught:{},items:{},trainers:{},badges:{},diff:{},page:0,loc:'route-1',sync:true,tab:'wild',night:false,intro:true},(()=>{try{const o=JSON.parse(localStorage.getItem(KEY)||'{}');return o&&typeof o==='object'?o:{};}catch(e){return {};}})());
+/* v9: returning visitors skip the desk intro unless they explicitly chose it; text size + view mode */
+try{ if(localStorage.getItem(KEY) && !S.introChoice) S.intro=false; }catch(e){}
+S.tz=Math.min(1.5,Math.max(1,+S.tz||1)); if(!['auto','page','width','single'].includes(S.view)) S.view='auto';
 ['caught','items','trainers','badges','diff'].forEach(k=>{ if(!S[k]||typeof S[k]!=='object') S[k]={}; });
 if(!['wild','items','trainers','badges','prof','settings'].includes(S.tab)) S.tab='wild';
 if(!S.diff) S.diff={};
@@ -299,8 +302,10 @@ function renderGear(){
     h+=window.Professor?Professor.html():'';
   } else if(S.tab==='settings'){
     const tg=(set,label,sub)=>`<div class="setrow"><div><span class="pbt-l">${label}</span><small>${sub}</small></div><label class="pbt"><input type="checkbox" data-set="${set}" ${S[set]?'checked':''} aria-label="${label}"><span class="pbt-track" aria-hidden="true"><span class="pbt-knob"></span></span></label></div>`;
-    h+=tg('night','NIGHT MODE','Desk-lamp lighting for late-night grinding.')+tg('sync','FOLLOW BOOK PAGE','The PokéGear jumps to the section you are reading.')+tg('intro','DESK INTRO','Show the 3D journal on the desk when the guide opens.')+
+    h+=tg('night','NIGHT MODE','Desk-lamp lighting for late-night grinding.')+tg('sync','FOLLOW BOOK PAGE','The PokéGear jumps to the section you are reading.')+tg('intro','DESK INTRO','Show the 3D journal on the desk at launch. Off = open straight to your last page (default for returning visitors).')+
+      `<div class="setrow"><div><span class="pbt-l">PAGE VIEW</span><small>Auto picks the two-page spread only when text stays readable.</small><div class="viewseg">${[['auto','AUTO'],['page','FIT PAGE'],['width','FIT WIDTH'],['single','SINGLE']].map(([v,l])=>`<button data-view="${v}" class="${S.view===v?'on':''}">${l}</button>`).join('')}</div></div></div>`+
       `<div class="setrow"><div><span class="pbt-l">REPLAY INTRO</span><small>Watch the journal open again.</small></div><button class="chk" id="replayIntro" style="width:auto;padding:0 10px;font-size:8px">PLAY</button></div>`+
+      `<div class="setrow"><div><span class="pbt-l">PRINT CHAPTER</span><small>Clean single-column pages of the chapter you are reading (or save as PDF).</small></div><button class="chk" id="printCh" style="width:auto;padding:0 10px;font-size:8px">PRINT</button></div>`+
       `<div class="setrow"><div><span class="pbt-l">FOUND A MISTAKE?</span><small>Wrong data, missing item or typo? Tell us on GitHub.</small></div><a class="chk gearlink" href="https://github.com/UribeJr/unbound-guide/issues/new" target="_blank" rel="noopener">REPORT</a></div>`+
       `<p class="gdisc">Fan project, not affiliated with Nintendo, Game Freak, or Skeli Games; data and screenshots from unboundwiki.com.</p>`;
   } else {
@@ -359,26 +364,46 @@ function stampBadge(id,on){
 }
 
 /* ---------- layout ---------- */
+function wantMobile(){
+  if(window.innerWidth<820 || (window.innerWidth<1000 && window.innerHeight>window.innerWidth)) return true;
+  if(S.view==='single') return true; if(S.view!=='auto') return false;
+  // auto: two-page spread only when it can render body text at >=14px (base 12px) when fitted to width
+  return (window.innerWidth-16)/1200*12 < 14;
+}
 function layout(){
-  const m = window.innerWidth<820 || (window.innerWidth<1000 && window.innerHeight>window.innerWidth);
+  const m = wantMobile();
+  document.body.classList.toggle('single',m && window.innerWidth>=820);
+  document.documentElement.style.setProperty('--mz',(1.25*S.tz).toFixed(3));
+  const tv=$('#tzVal'); if(tv) tv.textContent=Math.round(S.tz*100)+'%';
   if(m!==mobile){
     const p=mobile===null? Math.min(N-1,S.page||0) : curPage();
     mobile=m; document.body.classList.toggle('mobile',m);
     if(m){ mp=p; $('#book').innerHTML=''; buildMobile(); }
     else { spread=p===0?0:Math.floor((p+1)/2); $('#mbook').innerHTML=''; buildDesktop(); }
   }
+  const sp=$('#stageSpacer');
   if(!mobile){
-    const st=$('#stage'), w=st.offsetWidth, h=st.offsetHeight;
-    const sc=Math.min((window.innerWidth-40)/w,(window.innerHeight-54-64-20)/h,1.25);
-    st.style.setProperty('--scale',sc);
-  }
+    const st=$('#stage'), w=st.offsetWidth, h=st.offsetHeight, W=document.documentElement.clientWidth||innerWidth, H=window.innerHeight;
+    const avH=H-54-64-8, fp=Math.min((W-16)/w,avH/h,1.6), fw=Math.min((W-16)/w,1.8);
+    let base = S.view==='width' ? fw : S.view==='page' ? fp : (fp*12>=14 ? fp : fw);
+    const sc=base*S.tz, sw=w*sc, sh=h*sc;
+    const left=Math.max(8,(W-sw)/2), top=54+Math.max(4,(avH-sh)/2);
+    st.style.setProperty('--scale',sc); st.style.left=left+'px'; st.style.top=top+'px';
+    const over=sh>avH+4 || sw>W-8;
+    document.documentElement.classList.toggle('scrolly',over);
+    if(sp){ sp.style.top=(top+sh+72)+'px'; sp.style.left=(left+sw-1)+'px'; }
+  } else { document.documentElement.classList.remove('scrolly'); }
 }
-
+function setTz(v){ S.tz=Math.round(Math.min(1.5,Math.max(1,v))*10)/10; save(); layout(); window.track&&track('text_size',{tz:S.tz}); }
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{
   let t=e.target.closest('button,[data-full],.legend li');
   if(!t && e.target.matches && e.target.matches('img.sp-ink')){ const c=e.target.closest('[data-k]'); t=c&&c.querySelector('[data-caught]'); }
   if(!t) return;
+  if(t.id==='printCh') return printChapter();
+  if(t.id==='tzUp') return setTz(S.tz+.1);
+  if(t.id==='tzDown') return setTz(S.tz-.1);
+  if(t.dataset.view){ S.view=t.dataset.view; save(); layout(); return renderGear(); }
   if(t.id==='prev') return go(-1);
   if(t.id==='next') return go(1);
   if(t.id==='gearBtn'||t.id==='gearClose') return openGear();
@@ -410,7 +435,7 @@ document.addEventListener('mouseout',e=>{const li=e.target.closest('.legend li[d
 document.addEventListener('change',e=>{
   const inp=e.target; if(!inp.matches||!inp.matches('.pbt input')) return;
   const set=inp.dataset.set||(inp.id==='syncChk'?'sync':null);
-  if(set){ S[set]=inp.checked; save(); $$(`input[data-set="${set}"]`).forEach(x=>x.checked=inp.checked); if(set==='sync'){$('#syncChk').checked=inp.checked; afterNav();} if(set==='night'){ document.body.classList.toggle('night',inp.checked); window.track&&track('night_mode',{on:inp.checked}); } }
+  if(set){ S[set]=inp.checked; if(set==='intro') S.introChoice=true; save(); $$(`input[data-set="${set}"]`).forEach(x=>x.checked=inp.checked); if(set==='sync'){$('#syncChk').checked=inp.checked; afterNav();} if(set==='night'){ document.body.classList.toggle('night',inp.checked); window.track&&track('night_mode',{on:inp.checked}); } }
   const tr=inp.parentNode.querySelector('.pbt-track'), kn=tr&&tr.querySelector('.pbt-knob');
   if(G&&!RM&&tr){ G.fromTo(tr,{rotation:0},{keyframes:[{rotation:-10,duration:.07},{rotation:8,duration:.1},{rotation:-4,duration:.1},{rotation:0,duration:.14}],clearProps:'transform'});
     G.fromTo(kn,{scaleX:1.35,scaleY:.75},{scale:1,duration:.6,ease:'elastic.out(1.2,.3)',delay:.12,clearProps:'transform'}); }
@@ -442,5 +467,15 @@ $('#badgestrip').innerHTML=`<button class="btab ch" title="Contents"><span class
 // expose before the first layout/renderGear: the Professor tab reads it while rendering
 window.__guide={go,gotoPage,setSpread,openGear,renderGear,state:S,N,book:B,save,annotateVisible};
 window.addEventListener('resize',layout);
+/* v9 print: render every page into a clean single-column container */
+function buildPrint(all,eager){ let pb=$('#printbook'); if(pb) pb.remove(); pb=document.createElement('div'); pb.id='printbook';
+  // prints the chapter you are reading (whole 925-page book is too heavy for a browser print job)
+  const cur=curPage(); let k=0; CH.forEach((c,j)=>{ if(c.page<=cur) k=j; });
+  const lo=all?0:(k===0?0:CH[k].page), hi=all?N:(CH[k+1]?CH[k+1].page:N);
+  for(let i=lo;i<hi;i++){ const m=document.createElement('section'); m.className='ppage mpage'+(i%2?' even':''); const pe=pageEl(i); if(eager) $$('img[loading]',pe).forEach(x=>x.loading='eager'); m.appendChild(pe); pb.appendChild(m); }
+  document.body.appendChild(pb); return pb; }
+window.addEventListener('beforeprint',()=>{ if(!$('#printbook')) buildPrint(); });
+function printChapter(){ buildPrint(false,true); window.track&&track('print'); setTimeout(()=>window.print(),600); }
+window.__guide.buildPrint=buildPrint;
 layout();
 })();

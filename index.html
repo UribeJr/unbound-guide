@@ -26,11 +26,11 @@
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
-<script src="js/track.js?v=8"></script>
-<link rel="stylesheet" href="css/fonts.css?v=8">
-<link rel="stylesheet" href="css/fonts-journal.css?v=8">
-<link rel="stylesheet" href="css/guide.css?v=8">
-<link rel="stylesheet" href="css/journal.css?v=8">
+<script src="js/track.js?v=9"></script>
+<link rel="stylesheet" href="css/fonts.css?v=9">
+<link rel="stylesheet" href="css/fonts-journal.css?v=9">
+<link rel="stylesheet" href="css/guide.css?v=9">
+<link rel="stylesheet" href="css/journal.css?v=9">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -50,6 +50,7 @@
   <div class="spacer"></div>
   <div class="pgind" id="pgind">COVER</div>
   <label class="pbt tset" title="Night mode: desk lamp"><input type="checkbox" data-set="night" aria-label="Night mode"><span class="pbt-track" aria-hidden="true"><span class="pbt-knob"></span></span><span class="pbt-l">Night</span></label>
+  <div class="zoomctl" role="group" aria-label="Text size"><button id="tzDown" aria-label="Smaller text">A−</button><span id="tzVal">100%</span><button id="tzUp" aria-label="Larger text">A+</button></div>
   <button class="gearbtn" id="gearBtn" aria-controls="gear" aria-expanded="false"><span class="dot"></span>POKéGEAR</button>
 </header>
 <nav class="chips" id="chips" aria-label="Sections"></nav>
@@ -59,6 +60,7 @@
   <div class="badgestrip" id="badgestrip"></div>
 </main>
 <div class="mbook" id="mbook"></div>
+<div id="stageSpacer" aria-hidden="true"></div>
 
 <div class="nav">
   <button id="prev" aria-label="Previous page">◀ PREV</button>
@@ -72,7 +74,7 @@
     <div class="locsel"><button data-loc="-1" aria-label="Previous location">◀</button><div class="ln" id="locName"></div><button data-loc="1" aria-label="Next location">▶</button></div>
     <div class="locsel2"><select id="locSel" aria-label="Choose location"></select></div>
     <div class="sync"><label class="pbt"><input type="checkbox" id="syncChk" data-set="sync"><span class="pbt-track" aria-hidden="true"><span class="pbt-knob"></span></span><span class="pbt-l">FOLLOW BOOK PAGE</span></label><span>SAVED LOCALLY</span></div>
-    <div class="gtabs"><button data-tab="wild">WILD</button><button data-tab="items">ITEMS</button><button data-tab="trainers">TRAINERS</button><button data-tab="badges">BADGES</button><button data-tab="prof" aria-label="Ask Professor Oak"><img class="tabav" src="img/prof/oak-bust.png?v=8" alt="" width="14" height="14">ASK</button><button data-tab="settings" aria-label="Options">OPTS</button></div>
+    <div class="gtabs"><button data-tab="wild">WILD</button><button data-tab="items">ITEMS</button><button data-tab="trainers">TRAINERS</button><button data-tab="badges">BADGES</button><button data-tab="prof" aria-label="Ask Professor Oak"><img class="tabav" src="img/prof/oak-bust.png?v=9" alt="" width="14" height="14">ASK</button><button data-tab="settings" aria-label="Options">OPTS</button></div>
     <div class="gbody" id="gbody"></div>
   </div></div>
   <div class="gfoot"><div class="dpad" aria-hidden="true"></div><div class="pills" aria-hidden="true"><i></i><i></i></div><span class="credit2">DATA: UNBOUNDWIKI.COM</span><button id="resetBtn">RESET</button><div class="abtn" aria-hidden="true"><i>B</i><i>A</i></div></div>
@@ -84,54 +86,54 @@
 
 <script src="vendor/gsap.min.js"></script>
 <script src="vendor/DrawSVGPlugin.min.js"></script>
-<script src="data/config.js?v=8"></script>
-<script src="js/assets.js?v=8"></script>
-<script src="js/data.js?v=8"></script>
-<script src="js/pages.js?v=8"></script>
-<script src="js/badges.js?v=8"></script>
-<script src="js/render.js?v=8"></script>
-<script src="data/book.js?v=8"></script>
-<script src="data/p2.js?v=8"></script>
-<script src="data/p3.js?v=8"></script>
-<script src="data/p4.js?v=8"></script>
-<script src="data/p5.js?v=8"></script>
-<script src="data/p6.js?v=8"></script>
-<script src="data/p7.js?v=8"></script>
-<script src="data/p8.js?v=8"></script>
-<script src="data/p9.js?v=8"></script>
-<script src="data/p10.js?v=8"></script>
-<script src="data/p11.js?v=8"></script>
-<script src="data/p12.js?v=8"></script>
-<script src="data/p13.js?v=8"></script>
-<script src="data/p14.js?v=8"></script>
-<script src="data/p15.js?v=8"></script>
-<script src="data/p16.js?v=8"></script>
-<script src="data/p17.js?v=8"></script>
-<script src="data/p18.js?v=8"></script>
-<script src="data/p19.js?v=8"></script>
-<script src="data/p20.js?v=8"></script>
-<script src="data/p21.js?v=8"></script>
-<script src="data/p22.js?v=8"></script>
-<script src="data/p23.js?v=8"></script>
-<script src="data/p24.js?v=8"></script>
-<script src="data/p25.js?v=8"></script>
-<script src="data/p26.js?v=8"></script>
-<script src="data/p27.js?v=8"></script>
-<script src="data/p28.js?v=8"></script>
-<script src="data/p29.js?v=8"></script>
-<script src="data/p30.js?v=8"></script>
-<script src="data/p31.js?v=8"></script>
-<script src="data/p32.js?v=8"></script>
-<script src="data/p33.js?v=8"></script>
-<script src="data/p34.js?v=8"></script>
-<script src="data/p35.js?v=8"></script>
-<script src="data/p36.js?v=8"></script>
-<script src="data/p37.js?v=8"></script>
-<script src="data/p38.js?v=8"></script>
-<script src="data/p39.js?v=8"></script>
-<script src="data/p40.js?v=8"></script>
-<script src="js/professor.js?v=8"></script>
-<script src="js/app.js?v=8"></script>
-<script src="js/intro.js?v=8"></script>
+<script src="data/config.js?v=9"></script>
+<script src="js/assets.js?v=9"></script>
+<script src="js/data.js?v=9"></script>
+<script src="js/pages.js?v=9"></script>
+<script src="js/badges.js?v=9"></script>
+<script src="js/render.js?v=9"></script>
+<script src="data/book.js?v=9"></script>
+<script src="data/p2.js?v=9"></script>
+<script src="data/p3.js?v=9"></script>
+<script src="data/p4.js?v=9"></script>
+<script src="data/p5.js?v=9"></script>
+<script src="data/p6.js?v=9"></script>
+<script src="data/p7.js?v=9"></script>
+<script src="data/p8.js?v=9"></script>
+<script src="data/p9.js?v=9"></script>
+<script src="data/p10.js?v=9"></script>
+<script src="data/p11.js?v=9"></script>
+<script src="data/p12.js?v=9"></script>
+<script src="data/p13.js?v=9"></script>
+<script src="data/p14.js?v=9"></script>
+<script src="data/p15.js?v=9"></script>
+<script src="data/p16.js?v=9"></script>
+<script src="data/p17.js?v=9"></script>
+<script src="data/p18.js?v=9"></script>
+<script src="data/p19.js?v=9"></script>
+<script src="data/p20.js?v=9"></script>
+<script src="data/p21.js?v=9"></script>
+<script src="data/p22.js?v=9"></script>
+<script src="data/p23.js?v=9"></script>
+<script src="data/p24.js?v=9"></script>
+<script src="data/p25.js?v=9"></script>
+<script src="data/p26.js?v=9"></script>
+<script src="data/p27.js?v=9"></script>
+<script src="data/p28.js?v=9"></script>
+<script src="data/p29.js?v=9"></script>
+<script src="data/p30.js?v=9"></script>
+<script src="data/p31.js?v=9"></script>
+<script src="data/p32.js?v=9"></script>
+<script src="data/p33.js?v=9"></script>
+<script src="data/p34.js?v=9"></script>
+<script src="data/p35.js?v=9"></script>
+<script src="data/p36.js?v=9"></script>
+<script src="data/p37.js?v=9"></script>
+<script src="data/p38.js?v=9"></script>
+<script src="data/p39.js?v=9"></script>
+<script src="data/p40.js?v=9"></script>
+<script src="js/professor.js?v=9"></script>
+<script src="js/app.js?v=9"></script>
+<script src="js/intro.js?v=9"></script>
 </body>
 </html>
