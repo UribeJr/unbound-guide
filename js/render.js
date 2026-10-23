@@ -55,7 +55,7 @@ R.flowPage=function(desc,part,ch,pageNo){
   const first=part.units[desc.u[0]];
   const sec = first && part.sections[first.s] ? part.sections[first.s].title : '';
   if(!desc.u.length) return `<div class="pin-in gen">${R.opener(part,ch)}<div class="flow"><div class="u box warn">Part ${part.n} continues overleaf.</div></div>${R.folio(pageNo,'PART '+part.n)}</div>`;
-  return `<div class="pin-in gen">${desc.open?R.opener(part,ch):R.runhead(part,ch,sec)}<div class="flow">${desc.u.map(i=>R.unit(part.units[i],part)).join('')}</div>${R.folio(pageNo,'PART '+part.n)}</div>`;
+  return `<div class="pin-in gen">${desc.open?R.opener(part,ch):R.runhead(part,ch,sec)}<div class="flow"${desc.z?` style="zoom:${desc.z}"`:''}>${desc.u.map(i=>R.unit(part.units[i],part)).join('')}</div>${R.folio(pageNo,'PART '+part.n)}</div>`;
 };
 /* gym spread */
 R.gymLeft=function(g,ch,pageNo){

@@ -13,22 +13,22 @@
   }
 
   // Original 16x16 pixel-art professor bust (not based on any official sprite).
-  var OAK='img/prof/oak-bust.png?v=10'; // Professor Oak, Pokémon FireRed/LeafGreen trainer front pic (pret/pokefirered)
+  var OAK='img/prof/oak-bust.png?v=11'; // Professor Oak, Pokémon FireRed/LeafGreen trainer front pic (pret/pokefirered)
   function avatar(sz,cls){ return '<img class="'+(cls||'pav')+'" src="'+OAK+'" width="'+sz+'" height="'+sz+'" alt="" aria-hidden="true" draggable="false">'; }
-  function fmt(t){
-    var max=(G()&&G().N)||926;
+  function fmt(t,sources){
+    var max=(G()&&G().N)||960, am={}; (sources||[]).forEach(function(s){ if(s.a) am[s.p]=s.a; });
     return esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
-      .replace(/\[?\b[pP]\.\s?(\d{1,3})\]?/g,function(m,n){ n=+n; return n<max?'<a class="pcite" href="#" data-goto="'+n+'" title="Jump to page '+n+'">p.'+n+'</a>':m; })
+      .replace(/\[?\b[pP]\.\s?(\d{1,3})\]?/g,function(m,n){ n=+n; return n<max?'<a class="pcite" href="#" data-goto="'+n+'"'+(am[n]?' data-anchor="'+am[n]+'"':'')+' title="Jump to page '+n+'">p.'+n+'</a>':m; })
       .replace(/\n/g,'<br>');
   }
   function srcs(list){
     if(!list||!list.length) return '';
-    return '<div class="psrc">'+list.map(function(s){return '<a class="pcite" href="#" data-goto="'+s.p+'" title="'+esc(s.t)+'">p.'+s.p+'</a>';}).join(' ')+'</div>';
+    return '<div class="psrc">'+list.map(function(s){return '<a class="pcite" href="#" data-goto="'+s.p+'"'+(s.a?' data-anchor="'+esc(s.a)+'"':'')+' title="'+esc(s.t)+'">p.'+s.p+'</a>';}).join(' ')+'</div>';
   }
   function bubbles(){
     if(!log.length) return '<div class="pmsg prof"><b>'+avatar(18)+'PROF.</b>Hello, trainer! Ask me anything this journal covers — routes, gyms, trainers, items or where to catch a Pokémon. I\'ll point you to the right page.</div>';
     return log.map(function(m){
-      return '<div class="pmsg '+m.who+(m.resting?' resting':'')+'"><b>'+(m.who==='you'?'YOU':avatar(18)+'PROF.')+'</b>'+(m.who==='you'?esc(m.text):fmt(m.text))+(m.who==='prof'?srcs(m.sources):'')+'</div>';
+      return '<div class="pmsg '+m.who+(m.resting?' resting':'')+'"><b>'+(m.who==='you'?'YOU':avatar(18)+'PROF.')+'</b>'+(m.who==='you'?esc(m.text):fmt(m.text,m.sources))+(m.who==='prof'?srcs(m.sources):'')+'</div>';
     }).join('')+(busy?'<div class="pmsg prof typing"><b>'+avatar(18)+'PROF.</b><span class="dots"><i></i><i></i><i></i></span></div>':'');
   }
   function html(){

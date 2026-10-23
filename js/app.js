@@ -12,6 +12,12 @@ if(!S.diff) S.diff={};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
 const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
 const B=window.BOOK, PD=window.PD||{}, BP=B.pages, N=BP.length, LEAVES=Math.ceil(N/2);
+/* v11: pages carry anchors ("p<part>u<unit>"); page numbers may change when the book is re-paginated */
+const pageOfAnchor=a=>{ const m=/^p(\d+)u(\d+)$/.exec(a||''); if(!m) return -1; const n=+m[1], u=+m[2]; let best=-1;
+  for(let j=0;j<N;j++){ const d=BP[j]; if(d.t!=='f'||d.p!==n) continue; if(best<0) best=j; if(d.u.includes(u)) return j; if(d.u.length&&d.u[0]<=u) best=j; } return best; };
+(window.STARTERS||[]).forEach(s=>{ const p=pageOfAnchor(s.a); if(p>=0) s.page=p; });
+if((S.bv||10)!==B.ver){ let p=S.anchor?pageOfAnchor(S.anchor):-1; const rm=B.remap&&B.remap[String(S.bv||10)];
+  if(p<0&&rm&&S.page!=null) p=rm[S.page]; if(p>=0) S.page=p; S.bv=B.ver; }
 const CH=B.chapters.map((c,k)=>Object.assign({},c,{page:k===0?2:c.page, short:['FROZEN','CINDER','VALLEY','FALLSHORE','THUNDER','ANTISIS','SEAPORT','MAGNOLIA','LEAGUE','POSTGAME'][k]||c.name}));
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let mobile=null, spread=0, mp=0, busy=false;
@@ -241,7 +247,7 @@ function curPage(){ return mobile? mp : (spread===0?0:Math.min(N-1,2*spread-1));
 function go(dir){ if(mobile) setMobile(mp+dir); else if(!busy) setSpread(spread+dir); }
 function gotoPage(i){ i=Math.max(0,Math.min(N-1,i)); if(mobile) setMobile(i); else if(!busy) setSpread(i===0?0:Math.floor((i+1)/2)); }
 function afterNav(){
-  const p=curPage(); S.page=p;
+  const p=curPage(); S.page=p; S.anchor=(BP[p]&&BP[p].a)||null; S.bv=B.ver;
   const ps = mobile? `PAGE ${p}` : (spread===0?'COVER':(2*spread<N?`PAGES ${2*spread-1}–${2*spread}`:`PAGE ${2*spread-1}`));
   $('#pgind').textContent=ps+' / '+(N-1);
   $('#prev').disabled = mobile? mp===0 : spread===0;
@@ -410,6 +416,7 @@ document.addEventListener('click',e=>{
   if(t.id==='gearBtn'||t.id==='gearClose') return openGear();
   if(t.classList.contains('corner')) return go(+t.dataset.dir);
   if(t.dataset.ch!==undefined){ window.track&&track('chapter_jump',{chapter:CH[+t.dataset.ch].name}); return gotoPage(CH[+t.dataset.ch].page); }
+  if(t.dataset.anchor){ const p=pageOfAnchor(t.dataset.anchor); if(p>=0) return gotoPage(p); }
   if(t.dataset.goto!==undefined) return gotoPage(+t.dataset.goto);
   if(t.dataset.gym&&t.dataset.diff){ const g=B.gyms.find(x=>x.no==t.dataset.gym); S.diff[g.no]=t.dataset.diff; save(); return rerenderPage(g.page+1); }
   if(t.dataset.caught){ const k=t.dataset.caught; S.caught[k]=!S.caught[k]; save(); renderGear(); window.track&&track('caught_toggle',{pokemon:k,caught:!!S.caught[k]}); return popSticker(k,S.caught[k]); }
@@ -466,7 +473,7 @@ $('#badgestrip').innerHTML=`<button class="btab ch" title="Contents"><span class
   BADGES.map((b,i)=>`<button class="btab" style="--bc:${b.color}" data-badge="${b.id}" title="${b.name}: ${b.leader} (${b.type}). Opens the gym spread, p.${B.gyms[i].page}."><span class="bico"><span class="g">${badgeSVG(b.id,22,'dim')}</span><span class="c">${badgeSVG(b.id,22)}</span></span><span>${b.name.replace(' Badge','')}<small>${b.gym}</small></span></button>`).join('');
 
 // expose before the first layout/renderGear: the Professor tab reads it while rendering
-window.__guide={go,gotoPage,setSpread,openGear,renderGear,state:S,N,book:B,save,annotateVisible};
+window.__guide={pageOfAnchor,go,gotoPage,setSpread,openGear,renderGear,state:S,N,book:B,save,annotateVisible};
 window.addEventListener('resize',layout);
 /* v9 print: render every page into a clean single-column container */
 function buildPrint(all,eager){ let pb=$('#printbook'); if(pb) pb.remove(); pb=document.createElement('div'); pb.id='printbook';

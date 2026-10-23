@@ -132,9 +132,9 @@ window.TYPE_COLORS = {
    page = book page where the NPC appears in this guide. */
 window.STARTERS = [
   { region: "Unova", npc: "Unova Starters Lady", mons: ["Snivy", "Tepig", "Oshawott"], where: "Route 5 – west-most house, just west of the Day Care (north of Crater Town)",
-    tiers: [[0, 1], [4, 2], [7, 3]], page: 108, src: "https://unboundwiki.com/misc-info/useful-npcs/unova-starters-lady/" },
+    tiers: [[0, 1], [4, 2], [7, 3]], a: "p6u31", page: 108, src: "https://unboundwiki.com/misc-info/useful-npcs/unova-starters-lady/" },
   { region: "Sinnoh", npc: "Sinnoh Starters Lady", mons: ["Turtwig", "Chimchar", "Piplup"], where: "Dehara City – house southeast of the Rift Cave entrance (open the inner doors)",
-    tiers: [[0, 1], [6, 2], [8, 3]], page: 374, src: "https://unboundwiki.com/misc-info/useful-npcs/sinnoh-starters-lady/" },
+    tiers: [[0, 1], [6, 2], [8, 3]], a: "p17u89", page: 374, src: "https://unboundwiki.com/misc-info/useful-npcs/sinnoh-starters-lady/" },
   { region: "Alola", npc: "Alola Starters Lady", mons: ["Rowlet", "Litten", "Popplio"], where: "Seaport City – house west of the KBT Expressway entrance (woman with the pink umbrella)",
-    tiers: [[0, 1], [7, 2], [8, 3]], page: 706, src: "https://unboundwiki.com/misc-info/useful-npcs/alola-starters-lady/" }
+    tiers: [[0, 1], [7, 2], [8, 3]], a: "p31u84", page: 706, src: "https://unboundwiki.com/misc-info/useful-npcs/alola-starters-lady/" }
 ];

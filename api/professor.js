@@ -51,7 +51,7 @@ function search(q, badges, wantAhead, diff) {
 // ---------- protection ----------
 const INSTANCE = Math.random().toString(36).slice(2, 8);
 const hits = new Map();
-const uniqP = l => { const seen = new Set(); return l.filter(h => !seen.has(h.p) && seen.add(h.p)).map(h => ({ p: h.p, t: h.t })); }; // ip -> {min:[ts], day:[ts]}
+const uniqP = l => { const seen = new Set(); return l.filter(h => !seen.has(h.p) && seen.add(h.p)).map(h => Object.assign({ p: h.p, t: h.t }, h.a ? { a: h.a } : {})); }; // ip -> {min:[ts], day:[ts]}
 const cache = new Map(); // key -> {at, body}
 function limited(ip) {
   const now = Date.now(); const h = hits.get(ip) || { min: [], day: [] };
@@ -71,7 +71,7 @@ function starterLine(st, badges) {
 function starterAnswer(q, badges) {
   const S = INDEX.starters, b = `${badges} badge${badges === 1 ? '' : 's'}`;
   const mon = S.flatMap(st => st.mons.map(m => ({ st, m }))).find(o => new RegExp('\\b' + o.m + '\\b', 'i').test(q));
-  const src = l => l.map(st => ({ p: st.page, t: st.npc }));
+  const src = l => l.map(st => Object.assign({ p: st.page, t: st.npc }, st.a ? { a: st.a } : {}));
   if (mon) {
     const { st, m } = mon, L = starterLine(st, badges);
     const ans = `${/\b(can|could|may)\b/i.test(q) ? "Yes! " : ""}${m} is one of the ${st.region} starters, handed out by the ${st.npc} — ${st.where} (p.${st.page}). With ${b} you can ${L.n === 3 ? 'take all 3' : 'pick ' + L.n + ' of the 3'} (${st.mons.join(', ')}), so ${m} is yours to choose${L.n < 3 ? ' — choose wisely; your next pick opens at ' + L.nx[0] + ' badges' : ''}. (${st.region} picks unlock at ${st.tiers.map(t => t[0]).join('/')} badges.)`;
@@ -169,7 +169,7 @@ module.exports = async (req, res) => {
   try {
     const { text, model } = await askGroq(messages);
     const cited = [...new Set([...text.matchAll(/p\.\s?(\d{1,3})/g)].map(m => +m[1]))].filter(p => p >= 0 && p < INDEX.pages);
-    const sources = cited.map(p => results.find(h => h.p === p) || { p, t: '' }).map(h => ({ p: h.p, t: h.t }));
+    const sources = cited.map(p => results.find(h => h.p === p) || { p, t: '' }).map(h => Object.assign({ p: h.p, t: h.t }, h.a ? { a: h.a } : {}));
     const offTopic = /\b(doesn['’]t|does not|don['’]t|do not|isn['’]t|not) (cover|covered|mention|include)|outside (what|the scope)|only (know|answer|help with)[^.]*(guide|journal|unbound)/i.test(text) && sources.length <= 1;
     let answer = text;
     if (offTopic) answer = text.split(/(?<=[.!?])\s+/).filter(x => !/p\.\s?\d/.test(x)).join(' ') || "That's outside this guide — ask me about Pokémon Unbound routes, gyms, trainers or catches!";
