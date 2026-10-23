@@ -23,6 +23,7 @@ window.MON = {
   glameow:   { name: "Glameow", types: ["Normal"], dex: 431 },
   articuno:  { name: "Articuno", types: ["Ice", "Flying"], dex: 144 },
   "magearna-original": { name: "Original Color Magearna", types: [], dex: null },
+  vivillon: { name: "Vivillon (Icy Snow)", types: ["Bug", "Flying"], dex: 666, sprite: "assets/pokemon/vivillon-icy-snow.png" },
   "sandslash-a": { name: "Alolan Sandslash", types: ["Ice", "Steel"], dex: null, sprite: "assets/bt/sandslash-a.webp" }
 };
 window.sprite = id => (MON[id] && MON[id].sprite) || `assets/pokemon/${id}.webp`;
@@ -44,8 +45,8 @@ window.LOCS = [
   {
     id: "frozen-heights", name: "Frozen Heights", color: "#2f7fc1", sub: "Your hometown",
     wild: [
-      { mon: "articuno", method: "Static Legendary", time: "Post-game", rate: "–", lv: "TBD", note: "Wander around the spot near KBT Expressway" },
-      { mon: "magearna-original", method: "Reward Pokémon", time: "–", rate: "–", lv: "TBD", note: "Reward for Mission #069: The National Pokédex" }
+      { mon: "articuno", method: "Static Legendary", time: "Post-game", rate: "–", lv: "50", src: "Miraheze: Frozen Heights", note: "Wander around the spot near KBT Expressway" },
+      { mon: "magearna-original", method: "Reward Pokémon", time: "–", rate: "–", lv: "1", src: "Miraheze: Frozen Heights", note: "Reward for Mission #069: The National Pokédex" }
     ],
     items: [
       { id: "fh-berry-juice", name: "Berry Juice", where: "In your PC at game start", img: "27" },
@@ -57,43 +58,51 @@ window.LOCS = [
       { id: "fh-gem", name: "Psychic / Ground / Dragon Gem", gift: true, where: "Mission #041 reward from your neighbor (type depends on your starter)" },
       { id: "fh-stat-scanner", name: "Stat Scanner", gift: true, where: "Professor Log's Assistant, once 50 Pokémon are caught" },
       { id: "fh-dawn-stone", name: "Dawn Stone", req: "Rock Smash", where: "South of the Shadow Base entrance, past the breakable rock" },
-      { id: "fh-zygarde", name: "Zygarde Cell", where: "Top-left corner behind your neighbor's house" }
+      { id: "fh-zygarde", name: "Zygarde Cell", where: "Top-left corner behind your neighbor's house" },
+      { id: "fh-tips-1", name: "Trainer Tips sign #1", src: "Miraheze: Frozen Heights", where: "Beside your house (collectible)" },
+      { id: "fh-master-ball", name: "Master Ball", gift: true, src: "Miraheze: Frozen Heights", where: "Mission reward: Portal Purge" },
+      { id: "fh-catching-charm", name: "Catching Charm", gift: true, src: "Miraheze: Frozen Heights", where: "Mission reward: The West Borrius Pokédex" }
     ],
     trainers: [
       { id: "fh-rival", name: "Rival (First Round)", note: "Uses the starter strong against yours: you Beldum → he Gible; you Gible → he Larvitar; you Larvitar → he Beldum", sprite: "32", reward: "TBD",
         team: [{ mon: "beldum", lv: 10, alt: true }, { mon: "gible", lv: 10, alt: true }, { mon: "larvitar", lv: 10, alt: true }] },
-      { id: "fh-grunt2", name: "Shadow Grunt", note: "North of Frozen Heights, past the Cut tree. She has Prof. Log's package.", sprite: "69", reward: "TBD",
+      { id: "fh-grunt2", name: "Shadow Grunt", note: "North of Frozen Heights, past the Cut tree. She has Prof. Log's package.", sprite: "69", reward: "₽288", src: "Miraheze: Frozen Heights",
         team: [{ mon: "snorunt", lv: 9 }] }
     ]
   },
   {
     id: "route-1", name: "Route 1", color: "#3d9a4f", sub: "Snowy Mountain Pass",
     wild: [
-      { mon: "vanillite", method: "Long Grass", time: "Day & Night", rate: "49%", lv: "TBD" },
-      { mon: "snorunt",   method: "Long Grass", time: "Day & Night", rate: "45%", lv: "TBD" },
-      { mon: "delibird",  method: "Long Grass", time: "Day & Night", rate: "4%",  lv: "TBD" },
-      { mon: "minior",    method: "Long Grass", time: "Day & Night", rate: "2%",  lv: "TBD" }
+      { mon: "vanillite", method: "Long Grass", time: "Day & Night", rate: "49%", lv: "7–9", src: "Miraheze: Route 1" },
+      { mon: "snorunt",   method: "Long Grass", time: "Day & Night", rate: "45%", lv: "7–9", src: "Miraheze: Route 1" },
+      { mon: "delibird",  method: "Long Grass", time: "Day & Night", rate: "4%",  lv: "8–9", src: "Miraheze: Route 1" },
+      { mon: "minior",    method: "Long Grass", time: "Day & Night", rate: "2%",  lv: "9–10", src: "Miraheze: Route 1" },
+      { mon: "vivillon", method: "Special Encounter", time: "–", rate: "–", lv: "50", src: "Miraheze: Route 1", note: "Icy Snow pattern, up a Rock Climb ledge; also counts for the Vivillon pattern mission" }
     ],
     items: [
       { id: "r1-ice-heal", name: "Ice Heal", where: "West side of the route on the highest ledge, between a grove of trees near a patch of long grass", img: "44" },
       { id: "r1-oran", name: "Oran Berry", hidden: true, where: "West side on the southern ledge, north of the Icicle Cave entrance, in a rock", img: "45" },
       { id: "r1-lucky-egg", name: "Lucky Egg", req: "Rock Climb", where: "East of the frozen pond, up a cliff", img: "r1/04-pokemon-unbound-lucky-egg.webp" },
-      { id: "r1-zygarde", name: "Zygarde Cell", req: "Mission #070 (Dresco Town)", where: "Southwest of the frozen pond", img: "r1/05-pokemon-unbound-zygarde-cell-southwest-of-frozen-pond.webp" }
+      { id: "r1-zygarde", name: "Zygarde Cell", req: "Mission #070 (Dresco Town)", where: "Southwest of the frozen pond", img: "r1/05-pokemon-unbound-zygarde-cell-southwest-of-frozen-pond.webp" },
+      { id: "r1-quick-ball", name: "Quick Ball", gift: true, src: "Miraheze: Route 1", where: "Daily gift from the man at the south end of the route, after his catching tutorial" },
+      { id: "r1-tips-2", name: "Trainer Tips sign #2", src: "Miraheze: Route 1", where: "North of the old man (collectible)" }
     ],
     trainers: []
   },
   {
     id: "bellin-town", name: "Bellin Town", color: "#d9502e", sub: "First town past home",
     wild: [
-      { mon: "stunky",  method: "Gift Egg", time: "–", rate: "1 of 3", lv: "1", note: "Pokémon Egg Gentleman" },
-      { mon: "skorupi", method: "Gift Egg", time: "–", rate: "1 of 3", lv: "1", note: "Pokémon Egg Gentleman" },
-      { mon: "glameow", method: "Gift Egg", time: "–", rate: "1 of 3", lv: "1", note: "Pokémon Egg Gentleman" }
+      { mon: "stunky",  method: "Gift Egg", time: "–", rate: "1 of 3", lv: "1", note: "Egg Gentleman. Which of the 3 you get is fixed by your Trainer ID (ID mod 3), so it can't be rerolled" },
+      { mon: "skorupi", method: "Gift Egg", time: "–", rate: "1 of 3", lv: "1", note: "Egg Gentleman. Which of the 3 you get is fixed by your Trainer ID (ID mod 3), so it can't be rerolled" },
+      { mon: "glameow", method: "Gift Egg", time: "–", rate: "1 of 3", lv: "1", note: "Egg Gentleman. Which of the 3 you get is fixed by your Trainer ID (ID mod 3), so it can't be rerolled" }
     ],
     items: [
       { id: "bt-heal-balls", name: "Heal Ball ×5", gift: true, where: "Speak to the man in the southwest house", img: "54" },
       { id: "bt-beast-balls", name: "Beast Ball ×15", gift: true, where: "Same man, only with the Randomizer difficulty modifier", img: "bt/03-pokemon-unbound-beast-balls-x15-gift-man-in-the-southwest-house.webp" },
       { id: "bt-tm97", name: "TM97 Frost Breath", req: "Rock Climb", where: "Near the northeast house, up a climbable wall", img: "bt/04-pokemon-unbound-tm97-frost-breath-requires-rock-climb-northeast-house.webp" },
-      { id: "bt-tm56", name: "TM56 Hone Claws", gift: true, where: "Reward for Mission #067: The Food Thief (completed in Icicle Cave)" }
+      { id: "bt-tm56", name: "TM56 Hone Claws", gift: true, where: "Reward for Mission #067: The Food Thief (completed in Icicle Cave)" },
+      { id: "bt-tips-7", name: "Trainer Tips sign #7", src: "Miraheze: Bellin Town", where: "By the path into town (collectible)" },
+      { id: "bt-zygarde-3", name: "Zygarde Cell", src: "Miraheze: Bellin Town", where: "East side of town beside the fence" }
     ],
     trainers: [
       { id: "bt-terrance", name: "Poké Fan Terrance", note: "Only after getting Rock Climb", sprite: "bt/11-pokemon-unbound-poke-fan-terrance-after-getting-rock-climb.webp", reward: "₽2,680",

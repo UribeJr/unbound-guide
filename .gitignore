@@ -1,5 +1,7 @@
 screenshots/
-tools/
+tools/*
+!tools/miraheze/
+tools/miraheze/cache/
 *.zip
 *.log
 .DS_Store

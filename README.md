@@ -49,3 +49,18 @@ Screenshots, maps, sprites and text © their creators via unboundwiki.com. This 
 Static site with no build step. `index.html` is at the root and it works from `file://` or any static host (deployed on Vercel). Credit: all walkthrough content comes from **[unboundwiki.com](https://unboundwiki.com)**. Pokémon Unbound is a fan game by Skeli; this guide is an unofficial fan project and is not affiliated with Nintendo, Game Freak, The Pokémon Company or Prima.
 
 The Professor chat avatar (`img/prof/oak-bust.png`, full sprite `img/prof/oak-frlg.png`) is Professor Oak's trainer front pic from Pokémon FireRed/LeafGreen, taken from the [pret/pokefirered](https://github.com/pret/pokefirered) decompilation: [`graphics/trainers/front_pics/professor_oak_front_pic.png`](https://github.com/pret/pokefirered/blob/master/graphics/trainers/front_pics/professor_oak_front_pic.png). Palette index 0 was made transparent, then the sprite was cropped to the bust and scaled 4x nearest-neighbor. © Nintendo / Game Freak / Creatures.
+
+## Additional data: Pokémon Unbound Wiki (Miraheze)
+
+Wild levels and rates, trainer and gym prize money, extra items, collectibles, special encounters, and gym team checks come from the [Pokémon Unbound Wiki (Miraheze)](https://pokemonunbound.miraheze.org/). That content is licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). We use facts only, with no wiki prose or images. Each filled value carries a `src` (page and revision).
+
+To re-sync (rate-limited to 1 req/s, cached in `tools/miraheze/cache/`):
+
+```
+python3 tools/miraheze/fetch.py            # add --refresh to re-download
+python3 tools/miraheze/apply.py --dry      # report only
+python3 tools/miraheze/apply.py            # write data/pN.js + data/book.js
+node scripts/build-professor-index.js
+```
+
+See `tools/miraheze/report.md` for the latest diff report.

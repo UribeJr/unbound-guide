@@ -94,6 +94,7 @@ function endPage(i){
   <h3 class="bar">Credits</h3>
   <p class="credit">Walkthrough text, maps, screenshots, sprites and gym data © <a href="https://unboundwiki.com/walkthrough/" target="_blank" rel="noopener">unboundwiki.com</a>, credited and linked back to the wiki. Pokémon Unbound is a fan game by Skeli. Pokémon © Nintendo / Game Freak / Creatures. This is an unofficial fan guide.</p>
   <p class="credit">Professor avatar: Professor Oak trainer front pic from Pokémon FireRed/LeafGreen, via the <a href="https://github.com/pret/pokefirered/blob/master/graphics/trainers/front_pics/professor_oak_front_pic.png" target="_blank" rel="noopener">pret/pokefirered</a> decompilation (© Nintendo / Game Freak / Creatures).</p>
+  <p class="credit">Extra facts (wild levels and rates, prize money, extra items, collectibles, special encounters, and gym team checks) come from the <a href="https://pokemonunbound.miraheze.org/" target="_blank" rel="noopener">Pokémon Unbound Wiki (Miraheze)</a>, used under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Only facts are used: no wiki prose or images. Each value records its source page.</p>
   <p class="credit">Data rules: only what the wiki prints is shown. Anything it leaves out is marked <span class="tbd">TBD</span>.</p>
   <p class="disc">Fan project, not affiliated with Nintendo, Game Freak, or Skeli Games; data and screenshots from <a href="https://unboundwiki.com/walkthrough/" target="_blank" rel="noopener">unboundwiki.com</a>.</p>
   <p><a class="report" href="https://github.com/UribeJr/unbound-guide/issues/new" target="_blank" rel="noopener">✎ Report an error / wrong data</a></p>
@@ -280,7 +281,7 @@ function renderGear(){
       const seen={}, list=loc.wild.filter(w=>{const k=w.key+'|'+w.label; if(seen[k]) return false; return seen[k]=true;});
       const keys=[...new Set(list.map(w=>w.key))];
       h+=prog(keys.filter(k=>S.caught[k]).length,keys.length,'CAUGHT');
-      h+= list.length? list.map(w=>{const c=!!S.caught[w.key];return `<div class="grow2 ${c?'done':''}">${w.img?`<img class="sp" src="${w.img}" alt="" loading="lazy">`:''}<div class="gi"><b>${esc(w.name.toUpperCase())}</b>${esc(w.label||'Wild')}${w.x?' · '+esc(w.x):''}<small>Rate <span class="tbd">TBD</span> · Lv. ${w.lv?esc(w.lv):'<span class="tbd">TBD</span>'}</small></div><button class="chk" data-caught="${w.key}" aria-label="caught">${c?'✓':''}</button></div>`}).join('')
+      h+= list.length? list.map(w=>{const c=!!S.caught[w.key];return `<div class="grow2 ${c?'done':''}">${w.img?`<img class="sp" src="${w.img}" alt="" loading="lazy">`:''}<div class="gi"><b>${esc(w.name.toUpperCase())}</b>${esc(w.label||'Wild')}${w.x?' · '+esc(w.x):''}<small>Rate ${w.rate?esc(String(w.rate)):'<span class="tbd">TBD</span>'} · Lv. ${w.lv?esc(String(w.lv)):'<span class="tbd">TBD</span>'}</small></div><button class="chk" data-caught="${w.key}" aria-label="caught">${c?'✓':''}</button></div>`}).join('')
         : `<div class="empty">NO WILD POKéMON<br>LISTED FOR THIS SECTION</div>`;
     }
   } else if(S.tab==='items'){
@@ -291,7 +292,7 @@ function renderGear(){
     h+=prog(loc.trainers.filter(t=>S.trainers[t.id]).length,loc.trainers.length,'DEFEATED');
     h+= loc.trainers.length? loc.trainers.map(t=>{const c=!!S.trainers[t.id];
         const team= loc.p1? t.team.map(m=>MON[m.mon].name+' Lv.'+m.lv).join(t.team[0].alt?' / ':', ') : esc(t.team);
-        const small= loc.p1? `<small>Prize: ${t.reward} · ${t.note}</small>` : `<small>Prize: <span class="tbd">TBD</span></small>`;
+        const small= loc.p1? `<small>Prize: ${t.reward} · ${t.note}</small>` : `<small>Prize: ${t.prize?esc(t.prize):'<span class="tbd">TBD</span>'}</small>`;
         return `<div class="grow2 ${c?'done':''}"><div class="gi"><b>${esc(t.name.toUpperCase())}</b>${team}${small}</div><button class="chk" data-trainer="${t.id}">${c?'✓':''}</button></div>`}).join('')
       : `<div class="empty">NO TRAINERS LISTED<br>FOR THIS SECTION</div>`;
   } else if(S.tab==='prof'){

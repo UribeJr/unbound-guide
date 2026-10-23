@@ -14,8 +14,8 @@ function txt(u) {
   if (typeof u === 'string') return clean(u);
   if (typeof u === 'number') return '';
   if (Array.isArray(u)) return u.map(txt).filter(Boolean).join(', ');
-  if (u.k === 'trainer') return `Trainer ${clean(u.name)}: ` + (u.team || []).map(m => `${m.n.join(' ')}${m.x && m.x.length ? ' (' + m.x.join(' ') + ')' : ''} Lv${m.lv || '?'}`).join(', ') + (u.notes && u.notes.length ? '. ' + txt(u.notes) : '');
-  if (u.k === 'wild' || u.k === 'enc') return `${clean(u.title || '')}${u.label ? ' [' + u.label + ']' : ''}: ` + (u.mons || u.team || []).map(m => m.n.join(' ') + (m.x && m.x.length ? ' (' + m.x.join(' ') + ')' : '') + (m.lv ? ' Lv' + m.lv : '')).join(', ');
+  if (u.k === 'trainer') return `Trainer ${clean(u.name)}: ` + (u.team || []).map(m => `${m.n.join(' ')}${m.x && m.x.length ? ' (' + m.x.join(' ') + ')' : ''} Lv${m.lv || '?'}`).join(', ') + (u.notes && u.notes.length ? '. ' + txt(u.notes) : '') + (u.prize ? `. Prize ${u.prize}` : '');
+  if (u.k === 'wild' || u.k === 'enc') return `${clean(u.title || '')}${u.label ? ' [' + u.label + ']' : ''}: ` + (u.mons || u.team || []).map(m => m.n.join(' ') + (m.x && m.x.length ? ' (' + m.x.join(' ') + ')' : '') + (m.lv ? ' Lv' + m.lv : '') + (m.rate ? ' ' + m.rate : '')).join(', ');
   if (u.k === 'items') return 'Items: ' + u.rows.map(r => clean(r.name)).join(', ');
   return Object.entries(u).filter(([k]) => !SKIP.has(k)).map(([, v]) => txt(v)).filter(Boolean).join('. ');
 }
@@ -31,14 +31,14 @@ B.pages.forEach((pg, i) => {
     add(i, `Gym ${g.no}: ${g.title} – ${g.badgeName}, ${g.type}`, txt(g.intro) + ' ' + g.sections.map(s => s.title + ': ' + txt(s.paras)).join(' '), pg.c);
   } else if (pg.t === 'gr') {
     const g = B.gyms[pg.g];
-    for (const tm of g.teams) add(i, `Gym ${g.no} ${g.leader} team (${tm.diff}) – ${g.badgeName}`, tm.mons.map(m => `${m.name} Lv${m.lv} [${m.type}] weak to ${m.weak}; item ${m.item}; moves ${m.moves}${m.ability ? '; ability ' + m.ability : ''}`).join(' || '), pg.c);
+    for (const tm of g.teams) add(i, `Gym ${g.no} ${g.leader} team (${tm.diff}) – ${g.badgeName}${g.prize ? ', prize ' + g.prize : ''}`, tm.mons.map(m => `${m.name} Lv${m.lv} [${m.type}] weak to ${m.weak}; item ${m.item}; moves ${m.moves}${m.ability ? '; ability ' + m.ability : ''}`).join(' || '), pg.c);
   } else if (pg.t === 'note') {
     add(i, `Note page (Part ${pg.p})`, '', pg.c);
   }
 });
 // Part 1 (hand-built pages 2-12)
 const p1 = (B.parts[1] && B.parts[1].page) || 3;
-for (const L of window.LOCS) add(p1, `Part 1: ${L.name}`, `${L.sub || ''}. Wild: ${(L.wild || []).map(w => (MON[w.mon || w.id] || {}).name || w.mon || w.id).join(', ')}. Items: ${(L.items || []).map(t => t.name + (t.hidden ? ' (hidden)' : '')).join(', ')}. Trainers: ${(L.trainers || []).map(t => t.name + ' ' + (t.note || '') + ' – ' + (t.team || []).map(m => ((MON[m.mon] || {}).name || m.mon) + ' Lv' + m.lv).join(', ')).join('; ')}`, 0);
+for (const L of window.LOCS) add(p1, `Part 1: ${L.name}`, `${L.sub || ''}. Wild: ${(L.wild || []).map(w => ((MON[w.mon || w.id] || {}).name || w.mon || w.id) + (w.method ? ' ' + w.method : '') + (w.rate && w.rate !== '–' ? ' ' + w.rate : '') + (w.lv ? ' Lv' + w.lv : '') + (w.note ? ' (' + w.note + ')' : '')).join(', ')}. Items: ${(L.items || []).map(t => t.name + (t.hidden ? ' (hidden)' : '') + (t.gift ? ' (gift)' : '') + (t.where ? ': ' + t.where : '')).join('; ')}. Trainers: ${(L.trainers || []).map(t => t.name + ' ' + (t.note || '') + ' – ' + (t.team || []).map(m => ((MON[m.mon] || {}).name || m.mon) + ' Lv' + m.lv).join(', ') + (t.reward && t.reward !== 'TBD' ? ', prize ' + t.reward : '')).join('; ')}`, 0);
 // Starter giveaways (data.js STARTERS)
 for (const s of window.STARTERS) add(s.page, `${s.region} starters giveaway – ${s.npc}`, `${s.npc} gives the ${s.region} starters ${s.mons.join(', ')} for free. Location: ${s.where}. Badge tiers: ` + s.tiers.map(([b, n]) => `${b} badges = ${n} starter${n > 1 ? 's' : ''} total`).join('; ') + `. Starter Pokémon free gift.`, 0);
 add(Math.max(...window.STARTERS.map(s => s.page)) && 108, 'Starter giveaways overview (all regions)', window.STARTERS.map(s => `${s.region} (${s.mons.join('/')}) at ${s.where.split(' – ')[0]} p.${s.page}: ` + s.tiers.map(([b, n]) => `${n} at ${b}+ badges`).join(', ')).join('. ') + '. Which starters can I get: starter Pokémon available by badge count.', 0);
